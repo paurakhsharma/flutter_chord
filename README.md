@@ -2,6 +2,8 @@
 
 A new Flutter package project.
 
+![alt text](screenshot/screenshot.png)
+
 ## Getting Started
 
 This project is a starting point for a Dart
