@@ -1,5 +1,7 @@
 # flutter_chord
 
+[![Test](https://github.com/paurakhsharma/flutter_chord/actions/workflows/test.yml/badge.svg)](https://github.com/paurakhsharma/flutter_chord/actions/workflows/test.yml)
+
 Chord parser for Flutter apps.
 
 ![alt text](screenshot/screenshot.png)
