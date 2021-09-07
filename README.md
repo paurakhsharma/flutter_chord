@@ -1,16 +1,49 @@
 # flutter_chord
 
-A new Flutter package project.
+Chord parser for Flutter apps.
 
 ![alt text](screenshot/screenshot.png)
 
-## Getting Started
+## Usage
 
-This project is a starting point for a Dart
-[package](https://flutter.dev/developing-packages/),
-a library module containing code that can be shared easily across
-multiple Flutter or Dart projects.
+**1) Render the Lyrics and Chords directly.**
+```dart
+final textStyle = TextStyle(fontSize: 18, color: Colors.white);
+final chordStyle = TextStyle(fontSize: 20, color: Colors.green);
 
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+final lyrics = '''
+[C]Give me Freedom, [F]Give me fire
+[Am] Give me reason, [G]Take me higher
+''';
+
+@override
+  Widget build(BuildContext context) {
+    return LyricsRenderer(
+    lyrics: _lyrics,
+    textStyle: textStyle,
+    chordStyle: chordStyle,
+    onTapChord: (String chord) {
+      print('pressed chord: $chord');
+    },
+  );
+}
+```
+
+**2. Get a parsed `ChordLyricsDocument` and style it as you like.**
+```dart
+
+final textStyle = TextStyle(fontSize: 18, color: Colors.white);
+final chordStyle = TextStyle(fontSize: 20, color: Colors.green);
+
+final lyrics = '''
+[C]Give me Freedom , [F]Give me fire
+[Am] Give me reason , [G]Take me higher
+''';
+
+ChordProcessor _chordProcessor = ChordProcessor(context);
+ChordLyricsDocument chordLyricsDocument = _chordProcessor.processText(
+  text: lyrics,
+  lyricsStyle: textStyle,
+  chordStyle: chordStyle,
+);
+```

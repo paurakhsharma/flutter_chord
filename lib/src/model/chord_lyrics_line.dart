@@ -6,7 +6,7 @@ class ChordLyricsLine {
 
   @override
   String toString() {
-    return '{Chord: $chords, lyrics: $lyrics }\n';
+    return 'ChordLyricsLine($chords, lyrics: $lyrics)';
   }
 }
 
@@ -18,6 +18,6 @@ class Chord {
 
   @override
   String toString() {
-    return 'leadingSpace: $leadingSpace \n chordText: $chordText';
+    return 'Chord(leadingSpace: $leadingSpace, chordText: $chordText)';
   }
 }
