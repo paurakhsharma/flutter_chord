@@ -8,6 +8,7 @@ class ChordProcessor {
   final BuildContext context;
   ChordProcessor(this.context);
 
+  /// Process the text to get the parsed ChordLyricsDocument
   ChordLyricsDocument processText({
     required String text,
     required TextStyle lyricsStyle,
@@ -33,17 +34,6 @@ class ChordProcessor {
 
           double leadingSpace = 0;
           leadingSpace = (sizeOfLeadingLyrics - lastChordWidth);
-
-          // JsonEncoder encoder = new JsonEncoder.withIndent('  ');
-          // String prettyprint = encoder.convert({
-          //   'lyricsSoFar': _lyricsSoFar,
-          //   'lastChordText': lastChordText,
-          //   'chordSoFar': _chordsSoFar,
-          //   'lastChordWidth': lastChordWidth,
-          //   'sizeOfLeadingLyrics': sizeOfLeadingLyrics,
-          //   'sizeOfThisChord': sizeOfThisChord,
-          //   'leadingSpace': leadingSpace,
-          // });
 
           leadingSpace = max(0, leadingSpace);
 
