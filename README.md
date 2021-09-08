@@ -4,7 +4,7 @@
 
 Chord parser for Flutter apps.
 
-![alt text](screenshot/screenshot.png)
+![Example Screenshot](screenshot.png)
 
 ## Usage
 
