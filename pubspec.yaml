@@ -1,7 +1,7 @@
 name: flutter_chord
 description: Lyrics Chord parser for Flutter
 version: 0.0.1
-homepage:
+repository: https://github.com/paurakhsharma/flutter_chord
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
