@@ -78,15 +78,15 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _lyrics = '''
-[C]Give me Freedom , [F]Give me fire
-[Am] Give me reason , [G]Take me higher
-[C] See the champions [F], Take the field now
-[Am] Unify us , [G]make us feel proud
+[C]Give me Freedom, [F]Give me fire
+[Am]Give me reason, [G]Take me higher
+[C]See the champions [F], Take the field now
+[Am]Unify us, [G]make us feel proud
  
-[C] In the streets our , [F]hands are lifting
-[Am] As we lose our , [G]inhibition
-[C] Celebration , [F]its around us
-[Am] Every nation , [G]all around us
+[C]In the streets our, [F]hands are lifting
+[Am]As we lose our, [G]inhibition
+[C]Celebration, [F]its around us
+[Am]Every nation, [G]all around us
 ''';
   }
 }
