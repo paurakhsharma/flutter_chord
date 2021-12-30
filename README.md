@@ -4,6 +4,9 @@
 
 Chord parser for Flutter apps.
 
+## Features
+- Transpose Chord
+
 ![Example Screenshot](screenshot.png)
 
 ## Usage
@@ -27,6 +30,7 @@ final lyrics = '''
     onTapChord: (String chord) {
       print('pressed chord: $chord');
     },
+    transposeIncrement: 0,
   );
 }
 ```
@@ -47,5 +51,6 @@ ChordLyricsDocument chordLyricsDocument = _chordProcessor.processText(
   text: lyrics,
   lyricsStyle: textStyle,
   chordStyle: chordStyle,
+  transposeIncrement: 0,
 );
 ```
