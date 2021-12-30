@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../flutter_chord.dart';
 
-class LyricsRenderer extends StatelessWidget {
+class LyricsRenderer extends StatefulWidget {
   final String lyrics;
   final TextStyle textStyle;
   final TextStyle chordStyle;
   final bool showChord;
   final Function onTapChord;
+  final int transposeIncrement;
 
   const LyricsRenderer({
     Key? key,
@@ -15,59 +16,73 @@ class LyricsRenderer extends StatelessWidget {
     required this.textStyle,
     required this.chordStyle,
     this.showChord = true,
+    this.transposeIncrement = 0,
     required this.onTapChord,
   }) : super(key: key);
 
   @override
+  State<LyricsRenderer> createState() => _LyricsRendererState();
+}
+
+class _LyricsRendererState extends State<LyricsRenderer> {
+  @override
   Widget build(BuildContext context) {
     ChordProcessor _chordProcessor = ChordProcessor(context);
     final chordLyricsDocument = _chordProcessor.processText(
-      text: lyrics,
-      lyricsStyle: textStyle,
-      chordStyle: chordStyle,
+      text: widget.lyrics,
+      lyricsStyle: widget.textStyle,
+      chordStyle: widget.chordStyle,
+      transposeIncrement: widget.transposeIncrement,
     );
     if (chordLyricsDocument.chordLyricsLines.isEmpty) return Container();
-    return ListView.separated(
-      shrinkWrap: true,
-      scrollDirection: Axis.vertical,
-      physics: BouncingScrollPhysics(),
-      separatorBuilder: (context, index) => SizedBox(height: 8),
-      itemBuilder: (context, index) {
-        final line = chordLyricsDocument.chordLyricsLines[index];
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (showChord)
-              Row(
-                children: line.chords
-                    .map((chord) => Row(
-                          children: [
-                            SizedBox(
-                              width: chord.leadingSpace,
-                            ),
-                            GestureDetector(
-                              onTap: () => onTapChord(chord.chordText),
-                              child: RichText(
-                                text: TextSpan(
-                                  text: chord.chordText,
-                                  style: chordStyle,
-                                ),
-                              ),
-                            )
-                          ],
-                        ))
-                    .toList(),
-              ),
-            RichText(
-              text: TextSpan(
-                text: line.lyrics,
-                style: textStyle,
-              ),
-            )
-          ],
-        );
-      },
-      itemCount: chordLyricsDocument.chordLyricsLines.length,
+    return Column(
+      children: [          
+        Expanded(
+          child: ListView.separated(
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+            physics: BouncingScrollPhysics(),
+            separatorBuilder: (context, index) => SizedBox(height: 8),
+            itemBuilder: (context, index) {
+              final line = chordLyricsDocument.chordLyricsLines[index];
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (widget.showChord)
+                    Row(
+                      children: line.chords
+                          .map((chord) => Row(
+                                children: [
+                                  SizedBox(
+                                    width: chord.leadingSpace,
+                                  ),
+                                  GestureDetector(
+                                    onTap: () =>
+                                        widget.onTapChord(chord.chordText),
+                                    child: RichText(
+                                      text: TextSpan(
+                                        text: chord.chordText,
+                                        style: widget.chordStyle,
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ))
+                          .toList(),
+                    ),
+                  RichText(
+                    text: TextSpan(
+                      text: line.lyrics,
+                      style: widget.textStyle,
+                    ),
+                  )
+                ],
+              );
+            },
+            itemCount: chordLyricsDocument.chordLyricsLines.length,
+          ),
+        ),
+      ],
     );
   }
 }

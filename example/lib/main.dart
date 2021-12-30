@@ -30,6 +30,7 @@ class _HomePageState extends State<HomePage> {
   final chordStyle = TextStyle(fontSize: 20, color: Colors.green);
   final textStyle = TextStyle(fontSize: 18, color: Colors.white);
   String _lyrics = '';
+  int transposeIncrement = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +56,31 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
+          Divider(),
+          Row(
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    transposeIncrement--;
+                  });
+                },
+                child: Text('-'),
+              ),
+              SizedBox(width: 5),
+              Text('$transposeIncrement'),
+              SizedBox(width: 5),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    transposeIncrement++;
+                  });
+                },
+                child: Text('+'),
+              ),
+            ],
+          ),
+          Divider(),
           Expanded(
             child: Container(
               padding: const EdgeInsets.all(12.0),
@@ -66,6 +92,7 @@ class _HomePageState extends State<HomePage> {
                 onTapChord: (String chord) {
                   print('pressed chord: $chord');
                 },
+                transposeIncrement: transposeIncrement,
               ),
             ),
           )

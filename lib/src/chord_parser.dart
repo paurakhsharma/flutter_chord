@@ -13,6 +13,7 @@ class ChordProcessor {
     required String text,
     required TextStyle lyricsStyle,
     required chordStyle,
+    int transposeIncrement = 0,
   }) {
     final lines = text.split('\n');
     List<ChordLyricsLine> _chordLyricsLines =
@@ -46,7 +47,7 @@ class ChordProcessor {
           _chordHasStarted = true;
         } else {
           if (_chordHasStarted) {
-            _chordsSoFar += character;
+            _chordsSoFar += transposeChord(character, transposeIncrement);
           } else {
             _lyricsSoFar += character;
           }
@@ -70,5 +71,32 @@ class ChordProcessor {
     )..layout())
         .size
         .width;
+  }
+
+  String transposeChord(String chord, int increment) {
+    final cycle = [
+      "C",
+      "C#",
+      "D",
+      "D#",
+      "E",
+      "F",
+      "F#",
+      "G",
+      "G#",
+      "A",
+      "A#",
+      "B"
+    ];
+    String el = chord[0];
+    if (chord.length > 1 && chord[1] == '#') {
+      el += "#";
+    }
+    final ind = cycle.indexOf(el);
+    if (ind == -1) return chord;
+
+    final newInd = (ind + increment + cycle.length) % cycle.length;
+    final newChord = cycle[newInd];
+    return newChord + chord.substring(el.length);
   }
 }
