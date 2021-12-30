@@ -1,6 +1,6 @@
 name: flutter_chord
 description: Lyrics Chord parser for Flutter
-version: 0.0.3
+version: 0.0.4
 repository: https://github.com/paurakhsharma/flutter_chord
 
 environment:

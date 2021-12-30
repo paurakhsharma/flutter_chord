@@ -1,3 +1,7 @@
+## 0.0.4
+* Auto Scroll
+* Transpose
+
 ## 0.0.3
 * Export models
 
