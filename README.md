@@ -6,6 +6,7 @@ Chord parser for Flutter apps.
 
 ## Features
 - Transpose Chord
+- Auto Scroll
 
 ![Example Screenshot](screenshot.png)
 
@@ -31,6 +32,7 @@ final lyrics = '''
       print('pressed chord: $chord');
     },
     transposeIncrement: 0,
+    scrollSpeed: 0,
   );
 }
 ```

@@ -8,7 +8,13 @@ class LyricsRenderer extends StatefulWidget {
   final TextStyle chordStyle;
   final bool showChord;
   final Function onTapChord;
+
+  /// Transpose Increment for the Chords,
+  /// defaule value is 0, which means no transpose is applied
   final int transposeIncrement;
+
+  /// Auto Scroll Speed,
+  /// default value is 0, which means no auto scroll is applied
   final int scrollSpeed;
 
   const LyricsRenderer({
