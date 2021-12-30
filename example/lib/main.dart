@@ -31,6 +31,7 @@ class _HomePageState extends State<HomePage> {
   final textStyle = TextStyle(fontSize: 18, color: Colors.white);
   String _lyrics = '';
   int transposeIncrement = 0;
+  int scrollSpeed = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -58,25 +59,65 @@ class _HomePageState extends State<HomePage> {
           ),
           Divider(),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    transposeIncrement--;
-                  });
-                },
-                child: Text('-'),
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            transposeIncrement--;
+                          });
+                        },
+                        child: Text('-'),
+                      ),
+                      SizedBox(width: 5),
+                      Text('$transposeIncrement'),
+                      SizedBox(width: 5),
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            transposeIncrement++;
+                          });
+                        },
+                        child: Text('+'),
+                      ),
+                    ],
+                  ),
+                  Text('Transpose')
+                ],
               ),
-              SizedBox(width: 5),
-              Text('$transposeIncrement'),
-              SizedBox(width: 5),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    transposeIncrement++;
-                  });
-                },
-                child: Text('+'),
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: scrollSpeed <= 0
+                            ? null
+                            : () {
+                                setState(() {
+                                  scrollSpeed--;
+                                });
+                              },
+                        child: Text('-'),
+                      ),
+                      SizedBox(width: 5),
+                      Text('$scrollSpeed'),
+                      SizedBox(width: 5),
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            scrollSpeed++;
+                          });
+                        },
+                        child: Text('+'),
+                      ),
+                    ],
+                  ),
+                  Text('Auto Scroll')
+                ],
               ),
             ],
           ),
@@ -93,6 +134,7 @@ class _HomePageState extends State<HomePage> {
                   print('pressed chord: $chord');
                 },
                 transposeIncrement: transposeIncrement,
+                scrollSpeed: scrollSpeed,
               ),
             ),
           )

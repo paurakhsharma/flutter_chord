@@ -9,15 +9,17 @@ class LyricsRenderer extends StatefulWidget {
   final bool showChord;
   final Function onTapChord;
   final int transposeIncrement;
+  final int scrollSpeed;
 
   const LyricsRenderer({
     Key? key,
     required this.lyrics,
     required this.textStyle,
     required this.chordStyle,
+    required this.onTapChord,
     this.showChord = true,
     this.transposeIncrement = 0,
-    required this.onTapChord,
+    this.scrollSpeed = 0,
   }) : super(key: key);
 
   @override
@@ -25,6 +27,8 @@ class LyricsRenderer extends StatefulWidget {
 }
 
 class _LyricsRendererState extends State<LyricsRenderer> {
+  late final ScrollController _controller;
+
   @override
   Widget build(BuildContext context) {
     ChordProcessor _chordProcessor = ChordProcessor(context);
@@ -36,11 +40,12 @@ class _LyricsRendererState extends State<LyricsRenderer> {
     );
     if (chordLyricsDocument.chordLyricsLines.isEmpty) return Container();
     return Column(
-      children: [          
+      children: [
         Expanded(
           child: ListView.separated(
             shrinkWrap: true,
             scrollDirection: Axis.vertical,
+            controller: _controller,
             physics: BouncingScrollPhysics(),
             separatorBuilder: (context, index) => SizedBox(height: 8),
             itemBuilder: (context, index) {
@@ -84,6 +89,51 @@ class _LyricsRendererState extends State<LyricsRenderer> {
         ),
       ],
     );
+  }
+
+  @override
+  void didUpdateWidget(covariant LyricsRenderer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.scrollSpeed != widget.scrollSpeed) {
+      _scrollToEnd();
+    }
+  }
+
+  void _scrollToEnd() {
+    if (widget.scrollSpeed <= 0) {
+      // stop scrolling if the speed is 0 or less
+      _controller.jumpTo(_controller.offset);
+      return;
+    }
+
+    if (_controller.offset >= _controller.position.maxScrollExtent) return;
+
+    final seconds =
+        (_controller.position.maxScrollExtent / (widget.scrollSpeed)).floor();
+
+    _controller.animateTo(
+      _controller.position.maxScrollExtent,
+      duration: Duration(
+        seconds: seconds,
+      ),
+      curve: Curves.linear,
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = ScrollController();
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      // executes after build
+      _scrollToEnd();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }
 
