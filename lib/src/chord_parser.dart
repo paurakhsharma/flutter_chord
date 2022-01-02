@@ -67,6 +67,7 @@ class ChordProcessor {
     return ChordLyricsDocument(_chordLyricsLines);
   }
 
+  /// Return the textwidth of the text in the given style
   double textWidth(String text, TextStyle textStyle) {
     return (TextPainter(
       text: TextSpan(text: text, style: textStyle),
@@ -78,6 +79,7 @@ class ChordProcessor {
         .width;
   }
 
+  /// Transpose the chord text by the given increment
   String transposeChord(String chord, int increment) {
     final cycle = [
       "C",

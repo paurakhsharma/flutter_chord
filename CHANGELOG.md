@@ -1,3 +1,6 @@
+## 0.0.5
+* Fix Sharp chords transpose issue
+
 ## 0.0.4
 * Auto Scroll
 * Transpose
