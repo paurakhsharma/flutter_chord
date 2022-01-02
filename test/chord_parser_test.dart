@@ -27,7 +27,7 @@ void main() {
     },
   );
 
-    test(
+  test(
     'Can transpose chord by 2',
     () {
       final chordTable = [
