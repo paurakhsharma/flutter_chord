@@ -38,7 +38,12 @@ class ChordProcessor {
 
           leadingSpace = max(0, leadingSpace);
 
-          _chordLyricsLine.chords.add(Chord(leadingSpace, _chordsSoFar));
+          final transposedChord = transposeChord(
+            _chordsSoFar,
+            transposeIncrement,
+          );
+
+          _chordLyricsLine.chords.add(Chord(leadingSpace, transposedChord));
           _chordLyricsLine.lyrics += _lyricsSoFar;
           _lyricsSoFar = '';
           _chordsSoFar = '';
@@ -47,7 +52,7 @@ class ChordProcessor {
           _chordHasStarted = true;
         } else {
           if (_chordHasStarted) {
-            _chordsSoFar += transposeChord(character, transposeIncrement);
+            _chordsSoFar += character;
           } else {
             _lyricsSoFar += character;
           }
