@@ -72,7 +72,6 @@ class ChordProcessor {
     return (TextPainter(
       text: TextSpan(text: text, style: textStyle),
       maxLines: 1,
-      textScaleFactor: MediaQuery.of(context).textScaleFactor,
       textDirection: TextDirection.ltr,
     )..layout())
         .size
