@@ -1,6 +1,6 @@
 name: flutter_chord
 description: Lyrics Chord parser and renderer for Flutter. It also comes with transpose and auto-scroll features.
-version: 0.0.6
+version: 0.0.7
 repository: https://github.com/paurakhsharma/flutter_chord
 
 environment:

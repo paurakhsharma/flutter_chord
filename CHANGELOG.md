@@ -1,3 +1,6 @@
+## 0.0.7
+* Fix screenshot
+
 ## 0.0.6
 * Do not take textScaleFactor into account,
 to fix different chordWidth in different devices
