@@ -5,14 +5,16 @@
 Chord parser for Flutter apps.
 
 ## Features
+
 - Transpose Chord
 - Auto Scroll
 
-![Example Screenshot](screenshot.png)
+![Example Screenshot](https://raw.githubusercontent.com/paurakhsharma/flutter_chord/main/screenshot.png)
 
 ## Usage
 
 **1) Render the Lyrics and Chords directly.**
+
 ```dart
 final textStyle = TextStyle(fontSize: 18, color: Colors.white);
 final chordStyle = TextStyle(fontSize: 20, color: Colors.green);
@@ -38,6 +40,7 @@ final lyrics = '''
 ```
 
 **2. Get a parsed `ChordLyricsDocument` and style it as you like.**
+
 ```dart
 
 final textStyle = TextStyle(fontSize: 18, color: Colors.white);

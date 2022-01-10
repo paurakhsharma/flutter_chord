@@ -1,3 +1,7 @@
+## 0.0.6
+* Do not take textScaleFactor into account,
+to fix different chordWidth in different devices
+
 ## 0.0.5
 * Fix Sharp chords transpose issue
 
