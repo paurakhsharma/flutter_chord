@@ -9,7 +9,7 @@ Chord parser for Flutter apps.
 - Transpose Chord
 - Auto Scroll
 
-![Example Screenshot](https://raw.githubusercontent.com/paurakhsharma/flutter_chord/main/screenshot.png)
+<img src="https://raw.githubusercontent.com/paurakhsharma/flutter_chord/main/screenshot.png"></img>
 
 ## Usage
 
