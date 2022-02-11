@@ -45,9 +45,7 @@ class ChordProcessor {
             _chordHasStartedOuter = true;
           else if (_character == ']')
             _chordHasStartedOuter = false;
-          else if (_chordHasStartedOuter == true)
-            ;
-          else {
+          else if (!_chordHasStartedOuter) {
             _currentCharacters += _character;
             if (_character == ' ') {
               //use this marker to only split where there are spaces. We can trim later.
