@@ -27,6 +27,7 @@ class LyricsRenderer extends StatefulWidget {
     required this.chordStyle,
     required this.onTapChord,
     this.showChord = true,
+    this.widgetPadding = 0,
     this.transposeIncrement = 0,
     this.scrollSpeed = 0,
   }) : super(key: key);
@@ -45,6 +46,7 @@ class _LyricsRendererState extends State<LyricsRenderer> {
       text: widget.lyrics,
       lyricsStyle: widget.textStyle,
       chordStyle: widget.chordStyle,
+      widgetPadding: widget.widgetPadding,
       transposeIncrement: widget.transposeIncrement,
     );
     if (chordLyricsDocument.chordLyricsLines.isEmpty) return Container();
