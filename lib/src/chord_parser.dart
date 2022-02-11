@@ -75,7 +75,7 @@ class ChordProcessor {
     }
     
     List<ChordLyricsLine> _chordLyricsLines =
-        lines.map<ChordLyricsLine>((line) {
+        _newLines.map<ChordLyricsLine>((line) {
       ChordLyricsLine _chordLyricsLine = ChordLyricsLine([], '');
       String _lyricsSoFar = '';
       String _chordsSoFar = '';
