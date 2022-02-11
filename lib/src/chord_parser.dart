@@ -56,22 +56,25 @@ class ChordProcessor {
             //widgetPadding has been added as a parameter to be passed from the build function
             //It is intended to allow for padding in the widget when comparing it to screen width
             //An additional buffer of around 10 might be needed to definitely stop overflow (ie. padding + 10).
-            if (textWidth(_currentCharacters, lyricsStyle) + widgetPadding >= _media) {
-              _newLines.add(_currentLine.substring(_characterIndex, _lastSpace).trim());
+            if (textWidth(_currentCharacters, lyricsStyle) + widgetPadding >=
+                _media) {
+              _newLines.add(
+                  _currentLine.substring(_characterIndex, _lastSpace).trim());
               _currentCharacters = '';
               _characterIndex = _lastSpace;
             }
           }
         }
         //add the rest of the long line
-        _newLines.add(_currentLine.substring(_characterIndex, _currentLine.length).trim());
-        
+        _newLines.add(_currentLine
+            .substring(_characterIndex, _currentLine.length)
+            .trim());
       } else {
         //otherwise just add the regular line
         _newLines.add(_currentLine.trim());
       }
     }
-    
+
     List<ChordLyricsLine> _chordLyricsLines =
         _newLines.map<ChordLyricsLine>((line) {
       ChordLyricsLine _chordLyricsLine = ChordLyricsLine([], '');
