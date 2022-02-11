@@ -8,7 +8,7 @@ class LyricsRenderer extends StatefulWidget {
   final TextStyle chordStyle;
   final bool showChord;
   final Function onTapChord;
-  
+
   //To help stop overflow
   final int widgetPadding;
 
