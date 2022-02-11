@@ -8,6 +8,9 @@ class LyricsRenderer extends StatefulWidget {
   final TextStyle chordStyle;
   final bool showChord;
   final Function onTapChord;
+  
+  //To help stop overflow
+  final int widgetPadding;
 
   /// Transpose Increment for the Chords,
   /// defaule value is 0, which means no transpose is applied
