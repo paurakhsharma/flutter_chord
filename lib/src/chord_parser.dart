@@ -13,7 +13,7 @@ class ChordProcessor {
     required String text,
     required TextStyle lyricsStyle,
     required chordStyle,
-    required widgetPadding,
+    widgetPadding = 0,
     int transposeIncrement = 0,
   }) {
     final lines = text.split('\n');
