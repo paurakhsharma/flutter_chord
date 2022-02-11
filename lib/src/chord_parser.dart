@@ -31,11 +31,13 @@ class ChordProcessor {
 
     //loop through the lines
     for (var i = 0; i < lines.length; i++) {
+      _characterIndex = 0;
+      _currentCharacters = '';
       _currentLine = lines[i];
 
       //check if we have a long line
       if (textWidth(_currentLine, lyricsStyle) >= _media) {
-        
+        print('found a big line $_currentLine');
         //work our way through the line and split when we need to
         for (var j = 0; j < _currentLine.length; j++) {
           _character = _currentLine[j];
@@ -48,30 +50,30 @@ class ChordProcessor {
           else {
             _currentCharacters += _character;
             if (_character == ' ') {
-              //use this marker to only split where there are spaces
+              //use this marker to only split where there are spaces. We can trim later.
               _lastSpace = j;
             }
 
             //This is the point where we need to split
-            //I've added widgetPadding as a parameter to be passed from the build function
+            //widgetPadding has been added as a parameter to be passed from the build function
             //It is intended to allow for padding in the widget when comparing it to screen width
-            //I had to add a little extra (about 10) to stop overflow.
+            //An additional buffer of around 10 might be needed to definitely stop overflow (ie. padding + 10).
             if (textWidth(_currentCharacters, lyricsStyle) + widgetPadding >= _media) {
-              _newLines.add(lines[i].substring(_characterIndex, _lastSpace).trim());
+              _newLines.add(_currentLine.substring(_characterIndex, _lastSpace).trim());
               _currentCharacters = '';
               _characterIndex = _lastSpace;
             }
           }
         }
         //add the rest of the long line
-        _newLines.add(lines[i].substring(_characterIndex, lines[i].length).trim());
-        ;
+        _newLines.add(_currentLine.substring(_characterIndex, _currentLine.length).trim());
+        
       } else {
         //otherwise just add the regular line
-        _newLines.add(lines[i].trim());
+        _newLines.add(_currentLine.trim());
       }
     }
-    ;
+    
     List<ChordLyricsLine> _chordLyricsLines =
         lines.map<ChordLyricsLine>((line) {
       ChordLyricsLine _chordLyricsLine = ChordLyricsLine([], '');
