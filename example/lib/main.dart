@@ -135,6 +135,7 @@ class _HomePageState extends State<HomePage> {
                 },
                 transposeIncrement: transposeIncrement,
                 scrollSpeed: scrollSpeed,
+                widgetPadding: 24,
               ),
             ),
           )
