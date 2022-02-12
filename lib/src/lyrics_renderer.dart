@@ -9,7 +9,7 @@ class LyricsRenderer extends StatefulWidget {
   final bool showChord;
   final Function onTapChord;
 
-  //To help stop overflow
+  /// To help stop overflow, this should be the sum of left & right padding
   final int widgetPadding;
 
   /// Transpose Increment for the Chords,
