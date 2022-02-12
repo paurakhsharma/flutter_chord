@@ -1,3 +1,7 @@
+## 0.1.0
+* Thanks to @auhsor, long lyrics are splitted to multiple lines
+   to overcome overflow.
+
 ## 0.0.7
 * Fix screenshot
 
