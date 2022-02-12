@@ -9,6 +9,9 @@ class LyricsRenderer extends StatefulWidget {
   final bool showChord;
   final Function onTapChord;
 
+  //To help stop overflow
+  final int widgetPadding;
+
   /// Transpose Increment for the Chords,
   /// defaule value is 0, which means no transpose is applied
   final int transposeIncrement;
@@ -24,6 +27,7 @@ class LyricsRenderer extends StatefulWidget {
     required this.chordStyle,
     required this.onTapChord,
     this.showChord = true,
+    this.widgetPadding = 0,
     this.transposeIncrement = 0,
     this.scrollSpeed = 0,
   }) : super(key: key);
@@ -42,6 +46,7 @@ class _LyricsRendererState extends State<LyricsRenderer> {
       text: widget.lyrics,
       lyricsStyle: widget.textStyle,
       chordStyle: widget.chordStyle,
+      widgetPadding: widget.widgetPadding,
       transposeIncrement: widget.transposeIncrement,
     );
     if (chordLyricsDocument.chordLyricsLines.isEmpty) return Container();

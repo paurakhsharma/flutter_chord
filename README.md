@@ -30,6 +30,7 @@ final lyrics = '''
     lyrics: _lyrics,
     textStyle: textStyle,
     chordStyle: chordStyle,
+    widgetPadding: 50,
     onTapChord: (String chord) {
       print('pressed chord: $chord');
     },
