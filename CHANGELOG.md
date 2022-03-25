@@ -1,3 +1,7 @@
+## 0.1.1
+* Leading and trailing widget
+* Customizable extra line height
+
 ## 0.1.0
 * Thanks to @auhsor, long lyrics are splitted to multiple lines
    to overcome overflow.
