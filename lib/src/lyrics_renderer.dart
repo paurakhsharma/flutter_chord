@@ -13,12 +13,24 @@ class LyricsRenderer extends StatefulWidget {
   final int widgetPadding;
 
   /// Transpose Increment for the Chords,
-  /// defaule value is 0, which means no transpose is applied
+  /// default value is 0, which means no transpose is applied
   final int transposeIncrement;
 
   /// Auto Scroll Speed,
   /// default value is 0, which means no auto scroll is applied
   final int scrollSpeed;
+
+  /// Extra height between each line
+  final double lineHeight;
+
+  /// Widget before the lyrics starts
+  final Widget? leadingWidget;
+
+  /// Widget after the lyrics finishes
+  final Widget? trailingWidget;
+
+  /// Horizontal alignment
+  final CrossAxisAlignment horizontalAlignment;
 
   const LyricsRenderer({
     Key? key,
@@ -30,6 +42,10 @@ class LyricsRenderer extends StatefulWidget {
     this.widgetPadding = 0,
     this.transposeIncrement = 0,
     this.scrollSpeed = 0,
+    this.lineHeight = 8.0,
+    this.horizontalAlignment = CrossAxisAlignment.center,
+    this.leadingWidget,
+    this.trailingWidget,
   }) : super(key: key);
 
   @override
@@ -50,15 +66,19 @@ class _LyricsRendererState extends State<LyricsRenderer> {
       transposeIncrement: widget.transposeIncrement,
     );
     if (chordLyricsDocument.chordLyricsLines.isEmpty) return Container();
-    return Column(
-      children: [
-        Expanded(
-          child: ListView.separated(
+    return SingleChildScrollView(
+      controller: _controller,
+      child: Column(
+        crossAxisAlignment: widget.horizontalAlignment,
+        children: [
+          if (widget.leadingWidget != null) widget.leadingWidget!,
+          ListView.separated(
             shrinkWrap: true,
             scrollDirection: Axis.vertical,
-            controller: _controller,
-            physics: BouncingScrollPhysics(),
-            separatorBuilder: (context, index) => SizedBox(height: 8),
+            physics: const NeverScrollableScrollPhysics(),
+            separatorBuilder: (context, index) => SizedBox(
+              height: widget.lineHeight,
+            ),
             itemBuilder: (context, index) {
               final line = chordLyricsDocument.chordLyricsLines[index];
               return Column(
@@ -97,8 +117,9 @@ class _LyricsRendererState extends State<LyricsRenderer> {
             },
             itemCount: chordLyricsDocument.chordLyricsLines.length,
           ),
-        ),
-      ],
+          if (widget.trailingWidget != null) widget.trailingWidget!,
+        ],
+      ),
     );
   }
 
