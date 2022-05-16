@@ -37,7 +37,6 @@ class ChordProcessor {
 
       //check if we have a long line
       if (textWidth(_currentLine, lyricsStyle) >= _media) {
-        print('found a big line $_currentLine');
         //work our way through the line and split when we need to
         for (var j = 0; j < _currentLine.length; j++) {
           _character = _currentLine[j];

@@ -156,7 +156,7 @@ class _LyricsRendererState extends State<LyricsRenderer> {
   void initState() {
     super.initState();
     _controller = ScrollController();
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       // executes after build
       _scrollToEnd();
     });
