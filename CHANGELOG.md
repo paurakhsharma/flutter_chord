@@ -1,3 +1,5 @@
+## 0.1.2
+* Fix incompatibility issues with Flutter 3.0.0
 ## 0.1.1
 * Leading and trailing widget
 * Customizable extra line height
