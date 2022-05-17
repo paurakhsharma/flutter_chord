@@ -42,12 +42,20 @@ class LyricsRenderer extends StatefulWidget {
   /// Define physics of scrolling
   final ScrollPhysics scrollPhysics;
 
+  /// If not defined it will be the bold version of [textStyle]
+  final TextStyle? chorusStyle;
+
+  /// If not defined it will be the italic version of [textStyle]
+  final TextStyle? capoStyle;
+
   const LyricsRenderer(
       {Key? key,
       required this.lyrics,
       required this.textStyle,
       required this.chordStyle,
       required this.onTapChord,
+      this.chorusStyle,
+      this.capoStyle,
       this.scaleFactor = 1.0,
       this.showChord = true,
       this.widgetPadding = 0,
@@ -74,10 +82,12 @@ class _LyricsRendererState extends State<LyricsRenderer> {
   @override
   void initState() {
     super.initState();
-    chorusStyle = widget.textStyle.copyWith(fontWeight: FontWeight.bold);
-    capoStyle = widget.textStyle.copyWith(fontStyle: FontStyle.italic);
+    chorusStyle = widget.chorusStyle ??
+        widget.textStyle.copyWith(fontWeight: FontWeight.bold);
+    capoStyle = widget.capoStyle ??
+        widget.textStyle.copyWith(fontStyle: FontStyle.italic);
     _controller = ScrollController();
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       // executes after build
       _scrollToEnd();
     });
