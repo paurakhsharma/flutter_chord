@@ -192,33 +192,38 @@ class MetadataHandler {
   /// Get key in line if it's present
   /// Return true if match was found
   bool _setKeyIfMatch(String line) {
-    key = regKey.hasMatch(line) ? _getMetadataFromLine(line, 'key:') : null;
-    return key != null;
+    String? tmpKey =
+        regKey.hasMatch(line) ? _getMetadataFromLine(line, 'key:') : null;
+    key ??= tmpKey;
+    return tmpKey != null;
   }
 
   /// Get capo in line if it's present
   /// Return true if match was found
   bool _setCapoIfMatch(String line) {
-    capo = regCapo.hasMatch(line)
+    int? tmpCapo = regCapo.hasMatch(line)
         ? int.parse(_getMetadataFromLine(line, 'capo:'))
         : null;
-    return capo != null;
+    capo ??= tmpCapo;
+    return tmpCapo != null;
   }
 
   /// Get artist in line if it's present
   /// Return true if match was found
   bool _setArtistIfMatch(String line) {
-    artist =
+    String? tmpArtist =
         regArtist.hasMatch(line) ? _getMetadataFromLine(line, 'artist:') : null;
-    return artist != null;
+    artist ??= tmpArtist;
+    return tmpArtist != null;
   }
 
   /// Get title in line if it's present
   /// Return true if match was found
   bool _setTitleIfMatch(String line) {
-    title =
+    String? tmpTitle =
         regTitle.hasMatch(line) ? _getMetadataFromLine(line, 'title:') : null;
-    return title != null;
+    title ??= tmpTitle;
+    return tmpTitle != null;
   }
 
   String _getMetadataFromLine(String line, String key) {
