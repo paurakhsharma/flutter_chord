@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-
-import '../flutter_chord.dart';
+import 'chord_transposer.dart';
+import 'model/chord_lyrics_line.dart';
+import 'chord_parser.dart';
 
 class LyricsRenderer extends StatefulWidget {
   final String lyrics;
@@ -32,21 +33,41 @@ class LyricsRenderer extends StatefulWidget {
   /// Horizontal alignment
   final CrossAxisAlignment horizontalAlignment;
 
-  const LyricsRenderer({
-    Key? key,
-    required this.lyrics,
-    required this.textStyle,
-    required this.chordStyle,
-    required this.onTapChord,
-    this.showChord = true,
-    this.widgetPadding = 0,
-    this.transposeIncrement = 0,
-    this.scrollSpeed = 0,
-    this.lineHeight = 8.0,
-    this.horizontalAlignment = CrossAxisAlignment.center,
-    this.leadingWidget,
-    this.trailingWidget,
-  }) : super(key: key);
+  /// Scale factor of chords and lyrics
+  final double scaleFactor;
+
+  /// Notation that will be handled by the transposer
+  final ChordNotation chordNotation;
+
+  /// Define physics of scrolling
+  final ScrollPhysics scrollPhysics;
+
+  /// If not defined it will be the bold version of [textStyle]
+  final TextStyle? chorusStyle;
+
+  /// If not defined it will be the italic version of [textStyle]
+  final TextStyle? capoStyle;
+
+  const LyricsRenderer(
+      {Key? key,
+      required this.lyrics,
+      required this.textStyle,
+      required this.chordStyle,
+      required this.onTapChord,
+      this.chorusStyle,
+      this.capoStyle,
+      this.scaleFactor = 1.0,
+      this.showChord = true,
+      this.widgetPadding = 0,
+      this.transposeIncrement = 0,
+      this.scrollSpeed = 0,
+      this.lineHeight = 8.0,
+      this.horizontalAlignment = CrossAxisAlignment.center,
+      this.scrollPhysics = const ClampingScrollPhysics(),
+      this.leadingWidget,
+      this.trailingWidget,
+      this.chordNotation = ChordNotation.american})
+      : super(key: key);
 
   @override
   State<LyricsRenderer> createState() => _LyricsRendererState();
@@ -54,24 +75,52 @@ class LyricsRenderer extends StatefulWidget {
 
 class _LyricsRendererState extends State<LyricsRenderer> {
   late final ScrollController _controller;
+  late TextStyle chorusStyle;
+  late TextStyle capoStyle;
+  bool _isChorus = false;
+
+  @override
+  void initState() {
+    super.initState();
+    chorusStyle = widget.chorusStyle ??
+        widget.textStyle.copyWith(fontWeight: FontWeight.bold);
+    capoStyle = widget.capoStyle ??
+        widget.textStyle.copyWith(fontStyle: FontStyle.italic);
+    _controller = ScrollController();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // executes after build
+      _scrollToEnd();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    ChordProcessor _chordProcessor = ChordProcessor(context);
+    ChordProcessor _chordProcessor =
+        ChordProcessor(context, widget.chordNotation);
     final chordLyricsDocument = _chordProcessor.processText(
       text: widget.lyrics,
       lyricsStyle: widget.textStyle,
       chordStyle: widget.chordStyle,
       widgetPadding: widget.widgetPadding,
+      scaleFactor: widget.scaleFactor,
       transposeIncrement: widget.transposeIncrement,
     );
     if (chordLyricsDocument.chordLyricsLines.isEmpty) return Container();
     return SingleChildScrollView(
       controller: _controller,
+      physics: widget.scrollPhysics,
       child: Column(
         crossAxisAlignment: widget.horizontalAlignment,
         children: [
           if (widget.leadingWidget != null) widget.leadingWidget!,
+          if (chordLyricsDocument.capo != null)
+            Text('Capo: ${chordLyricsDocument.capo!}', style: capoStyle),
           ListView.separated(
             shrinkWrap: true,
             scrollDirection: Axis.vertical,
@@ -80,7 +129,14 @@ class _LyricsRendererState extends State<LyricsRenderer> {
               height: widget.lineHeight,
             ),
             itemBuilder: (context, index) {
-              final line = chordLyricsDocument.chordLyricsLines[index];
+              final ChordLyricsLine line =
+                  chordLyricsDocument.chordLyricsLines[index];
+              if (line.isStartOfChorus()) {
+                _isChorus = true;
+              }
+              if (line.isEndOfChorus()) {
+                _isChorus = false;
+              }
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -96,6 +152,7 @@ class _LyricsRendererState extends State<LyricsRenderer> {
                                     onTap: () =>
                                         widget.onTapChord(chord.chordText),
                                     child: RichText(
+                                      textScaleFactor: widget.scaleFactor,
                                       text: TextSpan(
                                         text: chord.chordText,
                                         style: widget.chordStyle,
@@ -107,9 +164,10 @@ class _LyricsRendererState extends State<LyricsRenderer> {
                           .toList(),
                     ),
                   RichText(
+                    textScaleFactor: widget.scaleFactor,
                     text: TextSpan(
                       text: line.lyrics,
-                      style: widget.textStyle,
+                      style: _isChorus ? chorusStyle : widget.textStyle,
                     ),
                   )
                 ],
@@ -151,22 +209,6 @@ class _LyricsRendererState extends State<LyricsRenderer> {
       curve: Curves.linear,
     );
   }
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = ScrollController();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // executes after build
-      _scrollToEnd();
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 }
 
 class TextRender extends CustomPainter {
@@ -177,8 +219,8 @@ class TextRender extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final textSpan = TextSpan(
-      text: this.text,
-      style: this.style,
+      text: text,
+      style: style,
     );
     final textPainter = TextPainter(
       text: textSpan,
