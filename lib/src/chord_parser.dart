@@ -21,6 +21,7 @@ class ChordProcessor {
     required String text,
     required TextStyle lyricsStyle,
     required TextStyle chordStyle,
+    bool showChord = true,
     double scaleFactor = 1.0,
     int widgetPadding = 0,
     int transposeIncrement = 0,
@@ -48,55 +49,57 @@ class ChordProcessor {
         continue;
       }
 
-      // obtain the lyrics portions in lyricsList
-      // and the chords in chordList and
-      // calculate paddingString before each chord
+      if (showChord) {
+        // obtain the lyrics portions in lyricsList
+        // and the chords in chordList and
+        // calculate paddingString before each chord
 
-      // Regular exp for chord
-      RegExp chordRe = RegExp(r'(\[[^\[]*\])');
-      List<String> lyricsList = currentLine.split(chordRe);
-      Iterable<RegExpMatch> matches = chordRe.allMatches(currentLine);
+        // Regular exp for chord
+        RegExp chordRe = RegExp(r'(\[[^\[]*\])');
+        List<String> lyricsList = currentLine.split(chordRe);
+        Iterable<RegExpMatch> matches = chordRe.allMatches(currentLine);
 
-      List<String> chordList = [];
-      for (RegExpMatch match in matches) {
-        String chordText = currentLine.substring(match.start, match.end);
-        chordList.add(chordText);
-      }
+        List<String> chordList = [];
+        for (RegExpMatch match in matches) {
+          String chordText = currentLine.substring(match.start, match.end);
+          chordList.add(chordText);
+        }
 
-      int lyricIdx = 0;
-      String paddingString = "";
-      String lyricsBeforeChord = lyricsList[lyricIdx++];
-      String correctedLine = lyricsBeforeChord;
-      chordList.forEach((chordText) {
-        lyricsBeforeChord = lyricsList[lyricIdx++];
-        double lyricsBetwChordsWidth =
-            textWidth(lyricsBeforeChord, lyricsStyle);
-        double chordWidth = textWidth(chordText, chordStyle);
-        String lastLyricChar = (lyricsBeforeChord.length > 0)
-            ? lyricsBeforeChord.substring(lyricsBeforeChord.length - 1)
-            : '';
-        int numAddSpaces = 0;
-        double spaceDiff = (lyricsBetwChordsWidth - chordWidth);
-        if (spaceDiff < 0) {
-          numAddSpaces = ((minLeadingSpace - spaceDiff) / spaceWidth).round();
-          if (lastLyricChar != ' ') {
-            int numSpacesRight = ((numAddSpaces - 1) / 2).round();
-            int numSpacesLeft = numAddSpaces - 1 - numSpacesRight;
-            paddingString = (spaceChar * numSpacesLeft) +
-                "-" +
-                (spaceChar * numSpacesRight);
-          } else if (lastLyricChar == ' ') {
-            paddingString = spaceChar * numAddSpaces;
+        int lyricIdx = 0;
+        String paddingString = "";
+        String lyricsBeforeChord = lyricsList[lyricIdx++];
+        String correctedLine = lyricsBeforeChord;
+        chordList.forEach((chordText) {
+          lyricsBeforeChord = lyricsList[lyricIdx++];
+          double lyricsBetwChordsWidth =
+              textWidth(lyricsBeforeChord, lyricsStyle);
+          double chordWidth = textWidth(chordText, chordStyle);
+          String lastLyricChar = (lyricsBeforeChord.length > 0)
+              ? lyricsBeforeChord.substring(lyricsBeforeChord.length - 1)
+              : '';
+          int numAddSpaces = 0;
+          double spaceDiff = (lyricsBetwChordsWidth - chordWidth);
+          if (spaceDiff < 0) {
+            numAddSpaces = ((minLeadingSpace - spaceDiff) / spaceWidth).round();
+            if (lastLyricChar != ' ') {
+              int numSpacesRight = ((numAddSpaces - 1) / 2).round();
+              int numSpacesLeft = numAddSpaces - 1 - numSpacesRight;
+              paddingString = (spaceChar * numSpacesLeft) +
+                  "-" +
+                  (spaceChar * numSpacesRight);
+            } else if (lastLyricChar == ' ') {
+              paddingString = spaceChar * numAddSpaces;
+            }
           }
-        }
-        if (lyricIdx == lyricsList.length) {
-          paddingString = "";
-        }
-        correctedLine += chordText + lyricsBeforeChord + paddingString;
-      });
-      //String endLyrics = lyricsList[lyricIdx];
-      //correctedLine += endLyrics;
-      currentLine = correctedLine;
+          if (lyricIdx == lyricsList.length) {
+            paddingString = "";
+          }
+          correctedLine += chordText + lyricsBeforeChord + paddingString;
+        });
+        //String endLyrics = lyricsList[lyricIdx];
+        //correctedLine += endLyrics;
+        currentLine = correctedLine;
+      }
 
       //check if we have a long line
       if (textWidth(currentLine, lyricsStyle) >= media) {
