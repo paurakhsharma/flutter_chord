@@ -8,7 +8,7 @@ class LyricsRenderer extends StatefulWidget {
   final TextStyle textStyle;
   final TextStyle chordStyle;
   final bool showChord;
-  final Function onTapChord;
+  final Function(String) onTapChord;
   final ScrollController? scrollController;
 
   /// To help stop overflow, this should be the sum of left & right padding
