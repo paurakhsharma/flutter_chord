@@ -199,10 +199,10 @@ class _LyricsRendererState extends State<LyricsRenderer> {
     }
 
     if (_controller.offset >= _controller.position.maxScrollExtent) return;
+    
 
     final seconds =
-        (_controller.positions.first.maxScrollExtent / (widget.scrollSpeed))
-            .floor();
+        ((_controller.position.maxScrollExtent - _controller.offset) / (widget.scrollSpeed)).floor();
 
     _controller.animateTo(
       _controller.position.maxScrollExtent,
