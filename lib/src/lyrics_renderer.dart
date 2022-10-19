@@ -10,6 +10,8 @@ class LyricsRenderer extends StatefulWidget {
   final bool showChord;
   final Function(String) onTapChord;
   final ScrollController? scrollController;
+  final double topPadding;
+  final double bottomPadding;
 
   /// To help stop overflow, this should be the sum of left & right padding
   final int widgetPadding;
@@ -57,6 +59,8 @@ class LyricsRenderer extends StatefulWidget {
       required this.onTapChord,
       this.chorusStyle,
       this.capoStyle,
+      this.topPadding = 60,
+      this.bottomPadding = 100,
       this.scaleFactor = 1.0,
       this.showChord = true,
       this.widgetPadding = 0,
@@ -116,6 +120,11 @@ class _LyricsRendererState extends State<LyricsRenderer> {
     if (chordLyricsDocument.chordLyricsLines.isEmpty) return Container();
     return SingleChildScrollView(
       controller: _controller,
+      padding: EdgeInsets.only(
+          right: widget.widgetPadding.toDouble(),
+          left: widget.widgetPadding.toDouble(),
+          bottom: widget.bottomPadding,
+          top: widget.topPadding),
       physics: widget.scrollPhysics,
       child: Column(
         crossAxisAlignment: widget.horizontalAlignment,
@@ -200,10 +209,10 @@ class _LyricsRendererState extends State<LyricsRenderer> {
 
     if (_controller.offset >= _controller.position.maxScrollExtent) return;
 
-    final extentToGo = _controller.position.maxScrollExtent - _controller.offset;
-    
-    final seconds =
-        (extentToGo / (widget.scrollSpeed)).floor();
+    final extentToGo =
+        _controller.position.maxScrollExtent - _controller.offset;
+
+    final seconds = (extentToGo / (widget.scrollSpeed)).floor();
 
     _controller.animateTo(
       _controller.position.maxScrollExtent,
