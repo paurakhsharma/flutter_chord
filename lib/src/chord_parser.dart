@@ -193,6 +193,7 @@ ChordLyricsLine _processSingleLine(
 
       _chordLyricsLine.chords.add(Chord(leadingSpace, transposedChord));
       //_lyricsSoFar += character;
+      _lyricsSoFar = _lyricsSoFar.replaceAll(_chordsSoFar, transposedChord);
       _chordLyricsLine.lyrics += _lyricsSoFar;
       _lyricsSoFar = '';
       _chordsSoFar = '';
