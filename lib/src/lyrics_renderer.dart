@@ -106,14 +106,16 @@ class _LyricsRendererState extends State<LyricsRenderer> {
   Widget build(BuildContext context) {
     ChordProcessor _chordProcessor =
         ChordProcessor(context, widget.chordNotation);
-    final chordLyricsDocument = _chordProcessor.processText(
-      text: widget.lyrics,
-      lyricsStyle: widget.textStyle,
-      chordStyle: widget.chordStyle,
-      widgetPadding: widget.widgetPadding,
-      scaleFactor: widget.scaleFactor,
-      transposeIncrement: widget.transposeIncrement,
-    );
+      final chordLyricsDocument = _chordProcessor.processText(
+        text: widget.lyrics,
+        lyricsStyle: widget.textStyle,
+        chordStyle: widget.chordStyle,
+        widgetPadding: widget.widgetPadding,
+        scaleFactor: widget.scaleFactor,
+        transposeIncrement: widget.transposeIncrement,
+        singleLine: widget.singleLine,
+      );
+
     if (chordLyricsDocument.chordLyricsLines.isEmpty) return Container();
     return SingleChildScrollView(
       controller: _controller,
@@ -143,7 +145,7 @@ class _LyricsRendererState extends State<LyricsRenderer> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (widget.showChord)
+                  if (widget.showChord && !widget.singleLine)
                     Row(
                       children: line.chords
                           .map((chord) => Row(
