@@ -47,6 +47,8 @@ class LyricsRenderer extends StatefulWidget {
 
   /// If not defined it will be the italic version of [textStyle]
   final TextStyle? capoStyle;
+  
+  final bool singleLine;
 
   const LyricsRenderer(
       {Key? key,
@@ -66,6 +68,7 @@ class LyricsRenderer extends StatefulWidget {
       this.scrollPhysics = const ClampingScrollPhysics(),
       this.leadingWidget,
       this.trailingWidget,
+      this.singleLine = true,
       this.chordNotation = ChordNotation.american})
       : super(key: key);
 
