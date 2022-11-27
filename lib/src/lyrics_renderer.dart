@@ -47,8 +47,12 @@ class LyricsRenderer extends StatefulWidget {
 
   /// If not defined it will be the italic version of [textStyle]
   final TextStyle? capoStyle;
-  
+
+  // display the chord and lyrics on the same line
   final bool singleLine;
+
+  // display chord after the word
+  final bool chordAfter;
 
   const LyricsRenderer(
       {Key? key,
@@ -69,6 +73,7 @@ class LyricsRenderer extends StatefulWidget {
       this.leadingWidget,
       this.trailingWidget,
       this.singleLine = true,
+      this.chordAfter = true,
       this.chordNotation = ChordNotation.american})
       : super(key: key);
 
@@ -114,6 +119,7 @@ class _LyricsRendererState extends State<LyricsRenderer> {
         scaleFactor: widget.scaleFactor,
         transposeIncrement: widget.transposeIncrement,
         singleLine: widget.singleLine,
+        chordAfter: widget.chordAfter,
       );
 
     if (chordLyricsDocument.chordLyricsLines.isEmpty) return Container();

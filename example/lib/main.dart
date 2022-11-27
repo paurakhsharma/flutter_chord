@@ -32,6 +32,9 @@ class _HomePageState extends State<HomePage> {
   String _lyrics = '';
   int transposeIncrement = 0;
   int scrollSpeed = 0;
+  bool showChord = true;
+  bool singleLine = true;
+  bool chordAfter = true;
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +119,21 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                   ),
-                  Text('Auto Scroll')
+                  Text('Auto Scroll'),
+                  Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            chordAfter = !chordAfter;
+                          });
+                        },
+                        child: Text('ChordAfter'),
+                      ),
+                      SizedBox(width: 5),
+                    ],
+                  ),
+
                 ],
               ),
             ],
@@ -135,6 +152,8 @@ class _HomePageState extends State<HomePage> {
                 },
                 transposeIncrement: transposeIncrement,
                 scrollSpeed: scrollSpeed,
+                showChord: showChord,
+                chordAfter: chordAfter,
                 widgetPadding: 24,
                 lineHeight: 4,
                 horizontalAlignment: CrossAxisAlignment.start,

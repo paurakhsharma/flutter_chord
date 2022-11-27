@@ -25,6 +25,7 @@ class ChordProcessor {
     int widgetPadding = 0,
     int transposeIncrement = 0,
     bool singleLine = true,
+    bool chordAfter = false,
   }) {
     final List<String> lines = text.split('\n');
     final MetadataHandler metadata = MetadataHandler();
@@ -57,18 +58,18 @@ class ChordProcessor {
       }
     }
     if (!singleLine){
-    List<ChordLyricsLine> _chordLyricsLines = newLines
-        .map<ChordLyricsLine>(
-            (line) => _processLine(line, lyricsStyle, chordStyle)).toList();
-    return ChordLyricsDocument(_chordLyricsLines,
-        capo: metadata.capo,
-        artist: metadata.artist,
-        title: metadata.title,
-        key: metadata.key);
+      List<ChordLyricsLine> _chordLyricsLines = newLines
+          .map<ChordLyricsLine>(
+              (line) => _processLine(line, lyricsStyle, chordStyle)).toList();
+      return ChordLyricsDocument(_chordLyricsLines,
+          capo: metadata.capo,
+          artist: metadata.artist,
+          title: metadata.title,
+          key: metadata.key);
     } else {
       List<ChordLyricsLine> _chordLyricsLines = newLines
           .map<ChordLyricsLine>(
-              (line) => _processSingleLine(line, lyricsStyle, chordStyle)).toList();
+              (line) => _processSingleLine(line, lyricsStyle, chordStyle, chordAfter)).toList();
       return ChordLyricsDocument(_chordLyricsLines,
           capo: metadata.capo,
           artist: metadata.artist,
@@ -170,7 +171,7 @@ class ChordProcessor {
 
 
 ChordLyricsLine _processSingleLine(
-    String line, TextStyle lyricsStyle, TextStyle chordStyle) {
+    String line, TextStyle lyricsStyle, TextStyle chordStyle, bool chordAfter) {
   ChordLyricsLine _chordLyricsLine = ChordLyricsLine();
   String _lyricsSoFar = '';
   String _chordsSoFar = '';
@@ -206,26 +207,45 @@ ChordLyricsLine _processSingleLine(
         _chordsSoFar += character;
       }
         //_lyricsSoFar += character;
-
     }
   });
 
   _chordLyricsLine.lyrics += _lyricsSoFar;
+  if (chordAfter){
+    _chordLyricsLine.lyrics = move_chord_before_to_after(_chordLyricsLine.lyrics);
+  }
 
   return _chordLyricsLine;
 }
 
 /// Return the textwidth of the text in the given style
-double textWidth(String text, TextStyle textStyle) {
-  return (TextPainter(
-    textScaleFactor: _textScaleFactor,
-    text: TextSpan(text: text, style: textStyle),
-    maxLines: 1,
-    textDirection: TextDirection.ltr,
-  )..layout())
-      .size
-      .width;
-}
+  double textWidth(String text, TextStyle textStyle) {
+    return (TextPainter(
+      textScaleFactor: _textScaleFactor,
+      text: TextSpan(text: text, style: textStyle),
+      maxLines: 1,
+      textDirection: TextDirection.ltr,
+    )..layout())
+        .size
+        .width;
+  }
+
+  String move_chord_after_to_before(String content) {
+    RegExp exp = RegExp(r'(\w+)\s*(\[\w+\])');
+    final newString = content.replaceAllMapped(exp, (Match m) {
+      return '${m[2]} ${m[1]}';
+    });
+    return newString;
+  }
+
+  String move_chord_before_to_after(String content) {
+    RegExp exp = RegExp(r'(\[\w+\])\s*(\w+)');
+    final newString = content.replaceAllMapped(exp, (Match m) {
+      return '${m[2]} ${m[1]}';
+    });
+    return newString;
+  }
+
 }
 
 class MetadataHandler {
