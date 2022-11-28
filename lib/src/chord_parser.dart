@@ -231,11 +231,17 @@ ChordLyricsLine _processSingleLine(
   }
 
   String move_chord_before_to_after(String content) {
-    RegExp exp = RegExp(r'(\[[\w#/]+\])\s*(\S+?)\s');
-    final newString = content.replaceAllMapped(exp, (Match m) {
-      return '${m[2]}${m[1]} ';
-    });
-    return newString;
+    //String newContent = "";
+    //content.split('\n').forEach((character) {
+      RegExp exp = RegExp(r'(\[[\w#/]+\])\s*(\S+?)[\s\.]', multiLine: true);
+      //print(content);
+      final newString = content.replaceAllMapped(exp, (Match m) {
+        return '${m[2]}${m[1]} ';
+      });
+      return newString;
+      //newContent = newContent + newString;
+    //});
+    //return newContent;
   }
 
 }
