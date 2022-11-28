@@ -231,9 +231,9 @@ ChordLyricsLine _processSingleLine(
   }
 
   String move_chord_before_to_after(String content) {
-    RegExp exp = RegExp(r'(\[[\w|#]+\])\s*(\S+?)\s');
+    RegExp exp = RegExp(r'(\[[\w#/]+\])\s*(\S+?)\s');
     final newString = content.replaceAllMapped(exp, (Match m) {
-      return '${m[2]}${m[1]}';
+      return '${m[2]}${m[1]} ';
     });
     return newString;
   }
