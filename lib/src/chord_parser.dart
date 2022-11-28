@@ -230,18 +230,10 @@ ChordLyricsLine _processSingleLine(
         .width;
   }
 
-  String move_chord_after_to_before(String content) {
-    RegExp exp = RegExp(r'(\w+)\s*(\[\w+\])');
-    final newString = content.replaceAllMapped(exp, (Match m) {
-      return '${m[2]} ${m[1]}';
-    });
-    return newString;
-  }
-
   String move_chord_before_to_after(String content) {
-    RegExp exp = RegExp(r'(\[[\w|#]+\])\s*(\w+)');
+    RegExp exp = RegExp(r'(\[[\w|#]+\])\s*(.+?)\s');
     final newString = content.replaceAllMapped(exp, (Match m) {
-      return '${m[2]} ${m[1]}';
+      return ' ${m[2]} ${m[1]} ';
     });
     return newString;
   }
