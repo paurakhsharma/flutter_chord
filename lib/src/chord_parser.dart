@@ -236,7 +236,7 @@ ChordLyricsLine _processSingleLine(
       RegExp exp = RegExp(r'(\[[\w#/]+\])(\S+?)[\s\.,]', multiLine: true);
       //print(content);
       final newString = content.replaceAllMapped(exp, (Match m) {
-        return '${m[2]}${m[1]} ';
+        return '${m[2]} ${m[1]} ';
       });
       return newString;
       //newContent = newContent + newString;
