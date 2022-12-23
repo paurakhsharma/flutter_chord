@@ -86,6 +86,7 @@ class _LyricsRendererState extends State<LyricsRenderer> {
   late TextStyle chorusStyle;
   late TextStyle capoStyle;
   bool _isChorus = false;
+  var isPause = false;
 
   @override
   void initState() {
@@ -123,71 +124,89 @@ class _LyricsRendererState extends State<LyricsRenderer> {
       );
 
     if (chordLyricsDocument.chordLyricsLines.isEmpty) return Container();
-    return SingleChildScrollView(
-      controller: _controller,
-      physics: widget.scrollPhysics,
-      child: Column(
-        crossAxisAlignment: widget.horizontalAlignment,
-        children: [
-          if (widget.leadingWidget != null) widget.leadingWidget!,
-          if (chordLyricsDocument.capo != null)
-            Text('Capo: ${chordLyricsDocument.capo!}', style: capoStyle),
-          ListView.separated(
-            shrinkWrap: true,
-            scrollDirection: Axis.vertical,
-            physics: const NeverScrollableScrollPhysics(),
-            separatorBuilder: (context, index) => SizedBox(
-              height: widget.lineHeight,
-            ),
-            itemBuilder: (context, index) {
-              final ChordLyricsLine line =
-                  chordLyricsDocument.chordLyricsLines[index];
-              if (line.isStartOfChorus()) {
-                _isChorus = true;
-              }
-              if (line.isEndOfChorus()) {
-                _isChorus = false;
-              }
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (widget.showChord && !widget.singleLine)
-                    Row(
-                      children: line.chords
-                          .map((chord) => Row(
-                                children: [
-                                  SizedBox(
-                                    width: chord.leadingSpace,
-                                  ),
-                                  GestureDetector(
-                                    onTap: () =>
-                                        widget.onTapChord(chord.chordText),
-                                    child: RichText(
-                                      textScaleFactor: widget.scaleFactor,
-                                      text: TextSpan(
-                                        text: chord.chordText,
-                                        style: widget.chordStyle,
-                                      ),
+    return GestureDetector(
+      onTap: () {
+          if (_controller.position.maxScrollExtent ==
+              _controller.position.pixels) {
+            isPause = true;
+            return;
+          }
+          if (_controller.position.pixels == 0) {
+            _scrollToEnd();
+            return;
+          }
+          isPause = !isPause;
+          if (!_controller.position.isScrollingNotifier.value &&
+              isPause == true) {
+            _scrollToEnd();
+          }
+      },
+      child: SingleChildScrollView(
+        controller: _controller,
+        physics: widget.scrollPhysics,
+        child: Column(
+          crossAxisAlignment: widget.horizontalAlignment,
+          children: [
+            if (widget.leadingWidget != null) widget.leadingWidget!,
+            if (chordLyricsDocument.capo != null)
+              Text('Capo: ${chordLyricsDocument.capo!}', style: capoStyle),
+            ListView.separated(
+              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
+              physics: const NeverScrollableScrollPhysics(),
+              separatorBuilder: (context, index) => SizedBox(
+                height: widget.lineHeight,
+              ),
+              itemBuilder: (context, index) {
+                final ChordLyricsLine line =
+                    chordLyricsDocument.chordLyricsLines[index];
+                if (line.isStartOfChorus()) {
+                  _isChorus = true;
+                }
+                if (line.isEndOfChorus()) {
+                  _isChorus = false;
+                }
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (widget.showChord && !widget.singleLine)
+                      Row(
+                        children: line.chords
+                            .map((chord) => Row(
+                                  children: [
+                                    SizedBox(
+                                      width: chord.leadingSpace,
                                     ),
-                                  )
-                                ],
-                              ))
-                          .toList(),
-                    ),
-                  RichText(
-                    textScaleFactor: widget.scaleFactor,
-                    text: TextSpan(
-                      text: line.lyrics,
-                      style: _isChorus ? chorusStyle : widget.textStyle,
-                    ),
-                  )
-                ],
-              );
-            },
-            itemCount: chordLyricsDocument.chordLyricsLines.length,
-          ),
-          if (widget.trailingWidget != null) widget.trailingWidget!,
-        ],
+                                    GestureDetector(
+                                      onTap: () =>
+                                          widget.onTapChord(chord.chordText),
+                                      child: RichText(
+                                        textScaleFactor: widget.scaleFactor,
+                                        text: TextSpan(
+                                          text: chord.chordText,
+                                          style: widget.chordStyle,
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ))
+                            .toList(),
+                      ),
+                    RichText(
+                      textScaleFactor: widget.scaleFactor,
+                      text: TextSpan(
+                        text: line.lyrics,
+                        style: _isChorus ? chorusStyle : widget.textStyle,
+                      ),
+                    )
+                  ],
+                );
+              },
+              itemCount: chordLyricsDocument.chordLyricsLines.length,
+            ),
+            if (widget.trailingWidget != null) widget.trailingWidget!,
+          ],
+        ),
       ),
     );
   }
@@ -202,6 +221,7 @@ class _LyricsRendererState extends State<LyricsRenderer> {
 
   void _scrollToEnd() {
     if (widget.scrollSpeed <= 0) {
+      isPause = true;
       // stop scrolling if the speed is 0 or less
       _controller.jumpTo(_controller.offset);
       return;
