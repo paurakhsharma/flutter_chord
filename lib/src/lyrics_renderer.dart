@@ -9,6 +9,7 @@ class LyricsRenderer extends StatefulWidget {
   final TextStyle chordStyle;
   final bool showChord;
   final Function onTapChord;
+  final Function onTap;
 
   /// To help stop overflow, this should be the sum of left & right padding
   final int widgetPadding;
@@ -60,6 +61,7 @@ class LyricsRenderer extends StatefulWidget {
       required this.textStyle,
       required this.chordStyle,
       required this.onTapChord,
+      required this.onTap,
       this.chorusStyle,
       this.capoStyle,
       this.scaleFactor = 1.0,
@@ -126,20 +128,21 @@ class _LyricsRendererState extends State<LyricsRenderer> {
     if (chordLyricsDocument.chordLyricsLines.isEmpty) return Container();
     return GestureDetector(
       onTap: () {
-          if (_controller.position.maxScrollExtent ==
-              _controller.position.pixels) {
-            isPause = true;
-            return;
-          }
-          if (_controller.position.pixels == 0) {
-            _scrollToEnd();
-            return;
-          }
-          isPause = !isPause;
-          if (!_controller.position.isScrollingNotifier.value &&
-              isPause == true) {
-            _scrollToEnd();
-          }
+        widget.onTap();
+        if (_controller.position.maxScrollExtent ==
+            _controller.position.pixels) {
+          isPause = true;
+          return;
+        }
+        if (_controller.position.pixels == 0) {
+          _scrollToEnd();
+          return;
+        }
+        isPause = !isPause;
+        if (!_controller.position.isScrollingNotifier.value &&
+            isPause == true) {
+          _scrollToEnd();
+        }
       },
       child: SingleChildScrollView(
         controller: _controller,
