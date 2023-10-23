@@ -93,7 +93,7 @@ class _LyricsRendererState extends State<LyricsRenderer> {
     commentStyle = widget.commentStyle ??
         widget.textStyle.copyWith(
           fontStyle: FontStyle.italic,
-          fontSize: widget.textStyle.fontSize! / 2,
+          fontSize: widget.textStyle.fontSize! - 5,
         );
     _controller = ScrollController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
