@@ -34,8 +34,12 @@ class ChordLyricsLine {
 
   /// Remove also the keyword
   bool isComment() {
-    const String endOfChorusAbbreviation = '{comment:';
-    bool out = lyrics.contains(endOfChorusAbbreviation);
+    const String comment = '{comment:';
+    bool out = lyrics.contains(comment);
+    if (out) {
+      lyrics.replaceAll(new RegExp(r'[^\w\s]+'), '');
+      lyrics.replaceAll(comment, '');
+    }
     return out;
   }
 
