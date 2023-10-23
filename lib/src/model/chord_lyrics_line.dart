@@ -32,16 +32,12 @@ class ChordLyricsLine {
     return out;
   }
 
-  String _getMetadataFromLine(String line, String key) {
-    return line.split(key).last.split('}').first.trim();
-  }
-
-  /// Get comment in line if it's present
-  /// Return true if match was found
-  bool isCommment(String line) {
-    final RegExp regComment = RegExp(r'^\{comment:.*\}');
-    String? tmpComment = regComment.hasMatch(line) ? _getMetadataFromLine(line, 'comment:') : null;
-    return tmpComment != null;
+  /// Remove also the keyword
+  bool isComment() {
+    const String endOfChorusAbbreviation = '{comment}';
+    const String endOfChorus = '{comment: }';
+    bool out = lyrics.contains(endOfChorus) || lyrics.contains(endOfChorusAbbreviation);
+    return out;
   }
 
   @override

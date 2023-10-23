@@ -153,10 +153,10 @@ class _LyricsRendererState extends State<LyricsRenderer> {
               if (line.isEndOfChorus()) {
                 _isChorus = false;
               }
-              if (line.isCommment(line.lyrics)) {
+              if (line.isComment()) {
                 _isComment = true;
               }
-              if (!line.isCommment(line.lyrics)) {
+              if (!line.isComment()) {
                 _isComment = false;
               }
               return Column(
