@@ -155,6 +155,8 @@ class _LyricsRendererState extends State<LyricsRenderer> {
               }
               if (line.isComment()) {
                 _isComment = true;
+                line.lyrics.replaceAll('{comment:', '');
+                line.lyrics.replaceAll('}', '');
               }
               if (!line.isComment()) {
                 _isComment = false;
