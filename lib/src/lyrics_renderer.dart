@@ -153,11 +153,10 @@ class _LyricsRendererState extends State<LyricsRenderer> {
               if (line.isEndOfChorus()) {
                 _isChorus = false;
               }
-              if (!line.isComment()) {
-                _isComment = false;
-              }
               if (line.isComment()) {
                 _isComment = true;
+              } else {
+                _isComment = false;
               }
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
