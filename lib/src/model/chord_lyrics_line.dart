@@ -34,11 +34,11 @@ class ChordLyricsLine {
 
   /// Remove also the keyword
   bool isComment() {
-    const String comment = 'comment';
+    const String comment = '{comment:';
     bool out = lyrics.contains(comment);
     if (out) {
-      lyrics.replaceAll(new RegExp(r"[^\s\w]"), '');
       lyrics.replaceAll(comment, '');
+      lyrics.replaceAll('}', '');
     }
     return out;
   }
