@@ -37,7 +37,7 @@ class ChordLyricsLine {
     const String comment = 'comment';
     bool out = lyrics.contains(comment);
     if (out) {
-      lyrics.replaceAll(new RegExp(r'[^\w\s]+'), '');
+      lyrics.replaceAll(new RegExp(r"[^\s\w]"), '');
       lyrics.replaceAll(comment, '');
     }
     return out;
