@@ -38,7 +38,7 @@ class ChordLyricsLine {
     bool out = lyrics.contains(comment);
     if (out) {
       lyrics = lyrics.replaceAll(comment, '');
-      lyrics = lyrics.replaceAll('}', '');
+      lyrics = lyrics.replaceAll('}', '').trim();
     }
     return out;
   }
