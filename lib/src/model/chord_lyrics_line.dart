@@ -34,9 +34,8 @@ class ChordLyricsLine {
 
   /// Remove also the keyword
   bool isComment() {
-    const String endOfChorusAbbreviation = '{comment}';
-    const String endOfChorus = '{comment: }';
-    bool out = lyrics.contains(endOfChorus) || lyrics.contains(endOfChorusAbbreviation);
+    const String endOfChorusAbbreviation = 'comment';
+    bool out = lyrics.contains(endOfChorusAbbreviation);
     return out;
   }
 
