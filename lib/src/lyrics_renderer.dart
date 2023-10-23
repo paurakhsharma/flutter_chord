@@ -146,7 +146,7 @@ class _LyricsRendererState extends State<LyricsRenderer> {
               height: widget.lineHeight,
             ),
             itemBuilder: (context, index) {
-              final ChordLyricsLine line = chordLyricsDocument.chordLyricsLines[index];
+              var line = chordLyricsDocument.chordLyricsLines[index];
               if (line.isStartOfChorus()) {
                 _isChorus = true;
               }
