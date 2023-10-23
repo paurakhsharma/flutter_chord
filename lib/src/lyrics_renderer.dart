@@ -146,7 +146,7 @@ class _LyricsRendererState extends State<LyricsRenderer> {
               height: widget.lineHeight,
             ),
             itemBuilder: (context, index) {
-              var line = chordLyricsDocument.chordLyricsLines[index];
+              final ChordLyricsLine line = chordLyricsDocument.chordLyricsLines[index];
               if (line.isStartOfChorus()) {
                 _isChorus = true;
               }
@@ -155,8 +155,6 @@ class _LyricsRendererState extends State<LyricsRenderer> {
               }
               if (line.isComment()) {
                 _isComment = true;
-                line.lyrics.replaceAll('{comment:', '');
-                line.lyrics.replaceAll('}', '');
               }
               if (!line.isComment()) {
                 _isComment = false;
