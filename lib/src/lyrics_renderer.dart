@@ -48,6 +48,9 @@ class LyricsRenderer extends StatefulWidget {
   /// If not defined it will be the italic version of [textStyle]
   final TextStyle? capoStyle;
 
+  /// If not defined it will be the italic version of [textStyle]
+  final TextStyle? commentStyle;
+
   const LyricsRenderer(
       {Key? key,
       required this.lyrics,
@@ -55,6 +58,7 @@ class LyricsRenderer extends StatefulWidget {
       required this.chordStyle,
       required this.onTapChord,
       this.chorusStyle,
+      this.commentStyle,
       this.capoStyle,
       this.scaleFactor = 1.0,
       this.showChord = true,
@@ -77,7 +81,9 @@ class _LyricsRendererState extends State<LyricsRenderer> {
   late final ScrollController _controller;
   late TextStyle chorusStyle;
   late TextStyle capoStyle;
+  late TextStyle commentStyle;
   bool _isChorus = false;
+  bool _isComment = false;
 
   @override
   void initState() {
@@ -86,6 +92,11 @@ class _LyricsRendererState extends State<LyricsRenderer> {
         widget.textStyle.copyWith(fontWeight: FontWeight.bold);
     capoStyle = widget.capoStyle ??
         widget.textStyle.copyWith(fontStyle: FontStyle.italic);
+    commentStyle = widget.commentStyle ??
+        widget.textStyle.copyWith(
+          fontStyle: FontStyle.italic,
+          fontSize: widget.textStyle.fontSize! - 2,
+        );
     _controller = ScrollController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // executes after build
@@ -97,6 +108,16 @@ class _LyricsRendererState extends State<LyricsRenderer> {
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  TextStyle getLineTextStyle() {
+    if (_isChorus) {
+      return chorusStyle;
+    } else if (_isComment) {
+      return commentStyle;
+    } else {
+      return widget.textStyle;
+    }
   }
 
   @override
@@ -137,6 +158,11 @@ class _LyricsRendererState extends State<LyricsRenderer> {
               if (line.isEndOfChorus()) {
                 _isChorus = false;
               }
+              if (line.isComment()) {
+                _isComment = true;
+              } else {
+                _isComment = false;
+              }
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -165,10 +191,8 @@ class _LyricsRendererState extends State<LyricsRenderer> {
                     ),
                   RichText(
                     textScaleFactor: widget.scaleFactor,
-                    text: TextSpan(
-                      text: line.lyrics,
-                      style: _isChorus ? chorusStyle : widget.textStyle,
-                    ),
+                    text:
+                        TextSpan(text: line.lyrics, style: getLineTextStyle()),
                   )
                 ],
               );

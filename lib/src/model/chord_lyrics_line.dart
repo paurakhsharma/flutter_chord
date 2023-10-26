@@ -16,7 +16,7 @@ class ChordLyricsLine {
         lyrics.contains(startOfChorusAbbreviation);
     if (out) {
       lyrics = lyrics.replaceAll(startOfChorus, '');
-      lyrics = lyrics.replaceAll(startOfChorusAbbreviation, '');
+      lyrics = lyrics.replaceAll(startOfChorusAbbreviation, '').trim();
     }
     return out;
   }
@@ -29,7 +29,18 @@ class ChordLyricsLine {
         lyrics.contains(endOfChorusAbbreviation);
     if (out) {
       lyrics = lyrics.replaceAll(endOfChorus, '');
-      lyrics = lyrics.replaceAll(endOfChorusAbbreviation, '');
+      lyrics = lyrics.replaceAll(endOfChorusAbbreviation, '').trim();
+    }
+    return out;
+  }
+
+  /// Remove also the keyword
+  bool isComment() {
+    const String comment = '{comment:';
+    bool out = lyrics.contains(comment);
+    if (out) {
+      lyrics = lyrics.replaceAll(comment, '');
+      lyrics = lyrics.replaceAll('}', '').trim();
     }
     return out;
   }
