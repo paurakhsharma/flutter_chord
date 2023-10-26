@@ -131,6 +131,7 @@ class _LyricsRendererState extends State<LyricsRenderer> {
       widgetPadding: widget.widgetPadding,
       scaleFactor: widget.scaleFactor,
       transposeIncrement: widget.transposeIncrement,
+      showChord: widget.showChord,
     );
     if (chordLyricsDocument.chordLyricsLines.isEmpty) return Container();
     return SingleChildScrollView(
