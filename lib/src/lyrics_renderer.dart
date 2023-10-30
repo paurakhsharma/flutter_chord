@@ -167,10 +167,6 @@ class _LyricsRendererState extends State<LyricsRenderer> {
               }
               if (int.tryParse(line.lyrics) != null) {
                 _isVerseNumber = true;
-                setState(() {
-                  verseNumber = int.parse(line.lyrics);
-                });
-                return const SizedBox();
               } else {
                 _isVerseNumber = false;
               }
@@ -200,21 +196,10 @@ class _LyricsRendererState extends State<LyricsRenderer> {
                               ))
                           .toList(),
                     ),
-                  Row(
-                    children: [
-                      if (_isVerseNumber)
-                        RichText(
-                          textScaleFactor: widget.scaleFactor,
-                          text: TextSpan(
-                              text: verseNumber.toString(),
-                              style: commentStyle),
-                        ),
-                      RichText(
-                        textScaleFactor: widget.scaleFactor,
-                        text: TextSpan(
-                            text: line.lyrics, style: getLineTextStyle()),
-                      ),
-                    ],
+                  RichText(
+                    textScaleFactor: widget.scaleFactor,
+                    text:
+                        TextSpan(text: line.lyrics, style: getLineTextStyle()),
                   )
                 ],
               );
