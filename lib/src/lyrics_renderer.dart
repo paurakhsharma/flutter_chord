@@ -85,6 +85,7 @@ class _LyricsRendererState extends State<LyricsRenderer> {
   bool _isChorus = false;
   bool _isComment = false;
   bool _isVerseNumber = false;
+  int verseNumber = 0;
 
   @override
   void initState() {
@@ -166,6 +167,10 @@ class _LyricsRendererState extends State<LyricsRenderer> {
               }
               if (int.tryParse(line.lyrics) != null) {
                 _isVerseNumber = true;
+                setState(() {
+                  verseNumber = int.parse(line.lyrics);
+                });
+                return const SizedBox();
               } else {
                 _isVerseNumber = false;
               }
@@ -195,12 +200,14 @@ class _LyricsRendererState extends State<LyricsRenderer> {
                               ))
                           .toList(),
                     ),
-                  Column(
+                  Row(
                     children: [
                       if (_isVerseNumber)
-                        Text(
-                          line.lyrics,
-                          style: commentStyle,
+                        RichText(
+                          textScaleFactor: widget.scaleFactor,
+                          text: TextSpan(
+                              text: verseNumber.toString(),
+                              style: commentStyle),
                         ),
                       RichText(
                         textScaleFactor: widget.scaleFactor,
