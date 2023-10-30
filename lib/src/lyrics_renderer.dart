@@ -179,7 +179,7 @@ class _LyricsRendererState extends State<LyricsRenderer> {
                     Row(
                       children: line.chords.map((chord) {
                         if (line.chords.first == chord) {
-                          chord.chordText = '     ' + chord.chordText;
+                          chord.chordText = '    ' + chord.chordText;
                         }
                         return Row(
                           children: [
