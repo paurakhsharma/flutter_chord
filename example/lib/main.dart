@@ -149,6 +149,7 @@ class _HomePageState extends State<HomePage> {
     _lyrics = '''
 
 
+1
 L[D]et me stand be[G]hind You, [D]Lord.
 Let me wash Your [G]feet with my [D]tears.
 Let me [A]wipe them with my [D]hair.
@@ -162,7 +163,7 @@ Let me [Em]kiss them and an[A]oint them with the [D]ointment.
     On You, most [D]precious One,
     Bec[A]ause I love [D]You.
 {eoc}
-
+2
 [D]Let me take a [G]pound of ointment [D]pure
 Of great value [G]to anoint Your [D]feet
 And [A]wipe them with my [D]hair
@@ -204,6 +205,7 @@ All my [Em]love, Lord, and [A]glory I'll waste on [D]You.
    For You, most [D]precious One,
    Be[A]cause I love [D]You.
 {eoc}
+
 
 ''';
   }

@@ -155,11 +155,7 @@ class ChordProcessor {
         _chordHasStarted = true;
       } else {
         if (_chordHasStarted) {
-          if (_chordsSoFar == '') {
-            _chordsSoFar += '      ' + character;
-          } else {
-            _chordsSoFar += character;
-          }
+          _chordsSoFar += character;
         } else {
           _lyricsSoFar += character;
         }
