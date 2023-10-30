@@ -84,8 +84,7 @@ class _LyricsRendererState extends State<LyricsRenderer> {
   late TextStyle commentStyle;
   bool _isChorus = false;
   bool _isComment = false;
-  bool _isVerseNumber = false;
-  int verseNumber = 0;
+  String? carry;
 
   @override
   void initState() {
@@ -165,36 +164,44 @@ class _LyricsRendererState extends State<LyricsRenderer> {
               } else {
                 _isComment = false;
               }
-              if (int.tryParse(line.lyrics) != null) {
-                _isVerseNumber = true;
+
+              if (carry == null) {
+                if (int.tryParse(line.lyrics) != null) {
+                  carry = '${line.lyrics}  ';
+                  return Container();
+                } else {
+                  line.lyrics = '    ${line.lyrics}';
+                }
               } else {
-                _isVerseNumber = false;
+                line.lyrics = carry! + line.lyrics;
+                carry = null;
               }
+
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (widget.showChord)
                     Row(
-                      children: line.chords
-                          .map((chord) => Row(
-                                children: [
-                                  SizedBox(
-                                    width: chord.leadingSpace,
-                                  ),
-                                  GestureDetector(
-                                    onTap: () =>
-                                        widget.onTapChord(chord.chordText),
-                                    child: RichText(
-                                      textScaleFactor: widget.scaleFactor,
-                                      text: TextSpan(
-                                        text: chord.chordText,
-                                        style: widget.chordStyle,
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ))
-                          .toList(),
+                      children: line.chords.map((chord) {
+                        chord.chordText = '   ${chord.chordText}';
+                        return Row(
+                          children: [
+                            SizedBox(
+                              width: chord.leadingSpace,
+                            ),
+                            GestureDetector(
+                              onTap: () => widget.onTapChord(chord.chordText),
+                              child: RichText(
+                                textScaleFactor: widget.scaleFactor,
+                                text: TextSpan(
+                                  text: chord.chordText,
+                                  style: widget.chordStyle,
+                                ),
+                              ),
+                            )
+                          ],
+                        );
+                      }).toList(),
                     ),
                   RichText(
                     textScaleFactor: widget.scaleFactor,
