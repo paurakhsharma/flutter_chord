@@ -179,7 +179,11 @@ class _LyricsRendererState extends State<LyricsRenderer> {
                     Row(
                       children: line.chords.map((chord) {
                         if (int.tryParse(line.lyrics) != null) {
+                          // Add leading space to help with verse number spacing
                           chord.chordText = '  ' + chord.chordText;
+                        } else if (line.chords.first == chord && index == 1) {
+                          // When no verse number the first chord is slightly off
+                          chord.leadingSpace = 1;
                         }
                         return Row(
                           children: [
