@@ -142,7 +142,7 @@ class ChordProcessor {
         final lastChordWidth = textWidth(lastChordText, chordStyle);
         // final sizeOfThisChord = textWidth(_chordsSoFar, chordStyle);
 
-        double leadingSpace = max(1, sizeOfLeadingLyrics - lastChordWidth - 15);
+        double leadingSpace = max(0, sizeOfLeadingLyrics - lastChordWidth);
 
         final transposedChord = chordTransposer.transposeChord(_chordsSoFar);
 
@@ -155,7 +155,11 @@ class ChordProcessor {
         _chordHasStarted = true;
       } else {
         if (_chordHasStarted) {
-          _chordsSoFar += character;
+          if (_chordsSoFar == '') {
+            _chordsSoFar += '    ' + character;
+          } else {
+            _chordsSoFar += character;
+          }
         } else {
           _lyricsSoFar += character;
         }

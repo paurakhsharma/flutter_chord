@@ -167,10 +167,10 @@ class _LyricsRendererState extends State<LyricsRenderer> {
 
               if (carry == null) {
                 if (int.tryParse(line.lyrics) != null) {
-                  carry = '${line.lyrics}  ';
+                  carry = '${line.lyrics}   ';
                   return Container();
                 } else {
-                  line.lyrics = '    ${line.lyrics}';
+                  line.lyrics = '     ${line.lyrics}';
                 }
               } else {
                 line.lyrics = carry! + line.lyrics;
@@ -183,7 +183,6 @@ class _LyricsRendererState extends State<LyricsRenderer> {
                   if (widget.showChord)
                     Row(
                       children: line.chords.map((chord) {
-                        chord.chordText = '   ${chord.chordText}';
                         return Row(
                           children: [
                             SizedBox(
