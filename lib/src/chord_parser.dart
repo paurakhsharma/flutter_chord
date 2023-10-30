@@ -46,18 +46,26 @@ class ChordProcessor {
       //check if we have a long line
       if (textWidth(currentLine, lyricsStyle) >= media) {
         _handleLongLine(
-            currentLine: currentLine, newLines: newLines, lyricsStyle: lyricsStyle, widgetPadding: widgetPadding);
+            currentLine: currentLine,
+            newLines: newLines,
+            lyricsStyle: lyricsStyle,
+            widgetPadding: widgetPadding);
       } else {
         //otherwise just add the regular line
         newLines.add(currentLine.trim());
       }
     }
 
-    List<ChordLyricsLine> _chordLyricsLines =
-        newLines.map<ChordLyricsLine>((line) => _processLine(line, lyricsStyle, chordStyle)).toList();
+    List<ChordLyricsLine> _chordLyricsLines = newLines
+        .map<ChordLyricsLine>(
+            (line) => _processLine(line, lyricsStyle, chordStyle))
+        .toList();
 
     return ChordLyricsDocument(_chordLyricsLines,
-        capo: metadata.capo, artist: metadata.artist, title: metadata.title, key: metadata.key);
+        capo: metadata.capo,
+        artist: metadata.artist,
+        title: metadata.title,
+        key: metadata.key);
   }
 
   void _handleLongLine(
@@ -91,15 +99,18 @@ class ChordProcessor {
         //widgetPadding has been added as a parameter to be passed from the build function
         //It is intended to allow for padding in the widget when comparing it to screen width
         //An additional buffer of around 10 might be needed to definitely stop overflow (ie. padding + 10).
-        if (textWidth(_currentCharacters, lyricsStyle) + widgetPadding >= media) {
-          newLines.add(currentLine.substring(_characterIndex, _lastSpace).trim());
+        if (textWidth(_currentCharacters, lyricsStyle) + widgetPadding >=
+            media) {
+          newLines
+              .add(currentLine.substring(_characterIndex, _lastSpace).trim());
           _currentCharacters = '';
           _characterIndex = _lastSpace;
         }
       }
     }
     //add the rest of the long line
-    newLines.add(currentLine.substring(_characterIndex, currentLine.length).trim());
+    newLines
+        .add(currentLine.substring(_characterIndex, currentLine.length).trim());
   }
 
   /// Return the textwidth of the text in the given style
@@ -114,7 +125,8 @@ class ChordProcessor {
         .width;
   }
 
-  ChordLyricsLine _processLine(String line, TextStyle lyricsStyle, TextStyle chordStyle) {
+  ChordLyricsLine _processLine(
+      String line, TextStyle lyricsStyle, TextStyle chordStyle) {
     ChordLyricsLine _chordLyricsLine = ChordLyricsLine();
     String _lyricsSoFar = '';
     String _chordsSoFar = '';
@@ -123,7 +135,9 @@ class ChordProcessor {
       if (character == ']') {
         final sizeOfLeadingLyrics = textWidth(_lyricsSoFar, lyricsStyle);
 
-        final lastChordText = _chordLyricsLine.chords.isNotEmpty ? _chordLyricsLine.chords.last.chordText : '';
+        final lastChordText = _chordLyricsLine.chords.isNotEmpty
+            ? _chordLyricsLine.chords.last.chordText
+            : '';
 
         final lastChordWidth = textWidth(lastChordText, chordStyle);
         // final sizeOfThisChord = textWidth(_chordsSoFar, chordStyle);
@@ -173,13 +187,17 @@ class MetadataHandler {
   /// Try to find and parse metadata in the string.
   /// Return true if there was a match
   bool parseLine(String line) {
-    return _setCapoIfMatch(line) || _setArtistIfMatch(line) || _setKeyIfMatch(line) || _setTitleIfMatch(line);
+    return _setCapoIfMatch(line) ||
+        _setArtistIfMatch(line) ||
+        _setKeyIfMatch(line) ||
+        _setTitleIfMatch(line);
   }
 
   /// Get key in line if it's present
   /// Return true if match was found
   bool _setKeyIfMatch(String line) {
-    String? tmpKey = regKey.hasMatch(line) ? _getMetadataFromLine(line, 'key:') : null;
+    String? tmpKey =
+        regKey.hasMatch(line) ? _getMetadataFromLine(line, 'key:') : null;
     key ??= tmpKey;
     return tmpKey != null;
   }
@@ -187,7 +205,9 @@ class MetadataHandler {
   /// Get capo in line if it's present
   /// Return true if match was found
   bool _setCapoIfMatch(String line) {
-    int? tmpCapo = regCapo.hasMatch(line) ? int.parse(_getMetadataFromLine(line, 'capo:')) : null;
+    int? tmpCapo = regCapo.hasMatch(line)
+        ? int.parse(_getMetadataFromLine(line, 'capo:'))
+        : null;
     capo ??= tmpCapo;
     return tmpCapo != null;
   }
@@ -195,7 +215,8 @@ class MetadataHandler {
   /// Get artist in line if it's present
   /// Return true if match was found
   bool _setArtistIfMatch(String line) {
-    String? tmpArtist = regArtist.hasMatch(line) ? _getMetadataFromLine(line, 'artist:') : null;
+    String? tmpArtist =
+        regArtist.hasMatch(line) ? _getMetadataFromLine(line, 'artist:') : null;
     artist ??= tmpArtist;
     return tmpArtist != null;
   }
@@ -203,7 +224,8 @@ class MetadataHandler {
   /// Get title in line if it's present
   /// Return true if match was found
   bool _setTitleIfMatch(String line) {
-    String? tmpTitle = regTitle.hasMatch(line) ? _getMetadataFromLine(line, 'title:') : null;
+    String? tmpTitle =
+        regTitle.hasMatch(line) ? _getMetadataFromLine(line, 'title:') : null;
     title ??= tmpTitle;
     return tmpTitle != null;
   }
