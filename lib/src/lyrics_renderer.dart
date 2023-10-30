@@ -84,6 +84,7 @@ class _LyricsRendererState extends State<LyricsRenderer> {
   late TextStyle commentStyle;
   bool _isChorus = false;
   bool _isComment = false;
+  bool _isVerseNumber = false;
 
   @override
   void initState() {
@@ -163,6 +164,11 @@ class _LyricsRendererState extends State<LyricsRenderer> {
               } else {
                 _isComment = false;
               }
+              if (int.tryParse(line.lyrics) != null) {
+                _isVerseNumber = true;
+              } else {
+                _isVerseNumber = false;
+              }
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -189,10 +195,19 @@ class _LyricsRendererState extends State<LyricsRenderer> {
                               ))
                           .toList(),
                     ),
-                  RichText(
-                    textScaleFactor: widget.scaleFactor,
-                    text:
-                        TextSpan(text: line.lyrics, style: getLineTextStyle()),
+                  Column(
+                    children: [
+                      if (_isVerseNumber)
+                        Text(
+                          line.lyrics,
+                          style: commentStyle,
+                        ),
+                      RichText(
+                        textScaleFactor: widget.scaleFactor,
+                        text: TextSpan(
+                            text: line.lyrics, style: getLineTextStyle()),
+                      ),
+                    ],
                   )
                 ],
               );
