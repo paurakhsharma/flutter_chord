@@ -185,10 +185,10 @@ class _LyricsRendererState extends State<LyricsRenderer> {
                   if (widget.showChord)
                     Row(
                       children: line.chords.map((chord) {
-                        if (line.chords.first == chord) {
-                          chord.chordText = '    ' + chord.chordText.trim();
-                        } else if (verseNumber > 1) {
+                        if (verseNumber > 1) {
                           chord.chordText = '     ' + chord.chordText.trim();
+                        } else if (line.chords.first == chord) {
+                          chord.chordText = '    ' + chord.chordText.trim();
                         }
                         return Row(
                           children: [
