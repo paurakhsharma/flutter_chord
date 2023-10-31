@@ -198,7 +198,8 @@ class _LyricsRendererState extends State<LyricsRenderer> {
                               width: chord.leadingSpace,
                             ),
                             GestureDetector(
-                              onTap: () => widget.onTapChord(chord.chordText),
+                              onTap: () =>
+                                  widget.onTapChord(chord.chordText.trim()),
                               child: RichText(
                                 textScaleFactor: widget.scaleFactor,
                                 text: TextSpan(
