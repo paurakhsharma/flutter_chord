@@ -84,7 +84,7 @@ class _LyricsRendererState extends State<LyricsRenderer> {
   late TextStyle commentStyle;
   bool _isChorus = false;
   bool _isComment = false;
-  String? carry;
+  String? carryVerseNumber;
   int verseNumber = 0;
 
   @override
@@ -166,17 +166,17 @@ class _LyricsRendererState extends State<LyricsRenderer> {
                 _isComment = false;
               }
 
-              if (carry == null) {
+              if (carryVerseNumber == null) {
                 if (int.tryParse(line.lyrics) != null) {
-                  carry = '${line.lyrics}   ';
+                  carryVerseNumber = '${line.lyrics}   ';
                   verseNumber = int.parse(line.lyrics);
                   return Container();
                 } else {
                   line.lyrics = '     ${line.lyrics}';
                 }
               } else {
-                line.lyrics = carry! + line.lyrics;
-                carry = null;
+                line.lyrics = carryVerseNumber! + line.lyrics;
+                carryVerseNumber = null;
               }
 
               return Column(
@@ -185,11 +185,12 @@ class _LyricsRendererState extends State<LyricsRenderer> {
                   if (widget.showChord)
                     Row(
                       children: line.chords.map((chord) {
-                        if (line.chords.first == chord && verseNumber > 1) {
-                          chord.chordText = '     ' + chord.chordText.trim();
-                        } else if (line.chords.first == chord &&
-                            verseNumber < 2) {
-                          chord.chordText = '    ' + chord.chordText.trim();
+                        if (line.chords.first == chord) {
+                          if (verseNumber > 1) {
+                            chord.chordText = '     ' + chord.chordText.trim();
+                          } else {
+                            chord.chordText = '    ' + chord.chordText.trim();
+                          }
                         }
                         return Row(
                           children: [
