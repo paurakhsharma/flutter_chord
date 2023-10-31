@@ -85,6 +85,7 @@ class _LyricsRendererState extends State<LyricsRenderer> {
   bool _isChorus = false;
   bool _isComment = false;
   String? carry;
+  int verseNumber = 0;
 
   @override
   void initState() {
@@ -168,6 +169,7 @@ class _LyricsRendererState extends State<LyricsRenderer> {
               if (carry == null) {
                 if (int.tryParse(line.lyrics) != null) {
                   carry = '${line.lyrics}   ';
+                  verseNumber = int.parse(line.lyrics);
                   return Container();
                 } else {
                   line.lyrics = '     ${line.lyrics}';
@@ -185,6 +187,8 @@ class _LyricsRendererState extends State<LyricsRenderer> {
                       children: line.chords.map((chord) {
                         if (line.chords.first == chord) {
                           chord.chordText = '    ' + chord.chordText.trim();
+                        } else if (verseNumber > 1) {
+                          chord.chordText = '     ' + chord.chordText.trim();
                         }
                         return Row(
                           children: [
