@@ -90,8 +90,10 @@ class _LyricsRendererState extends State<LyricsRenderer> {
   @override
   void initState() {
     super.initState();
-    chorusStyle = widget.chorusStyle ?? widget.textStyle.copyWith(fontWeight: FontWeight.bold);
-    capoStyle = widget.capoStyle ?? widget.textStyle.copyWith(fontStyle: FontStyle.italic);
+    chorusStyle = widget.chorusStyle ??
+        widget.textStyle.copyWith(fontWeight: FontWeight.bold);
+    capoStyle = widget.capoStyle ??
+        widget.textStyle.copyWith(fontStyle: FontStyle.italic);
     commentStyle = widget.commentStyle ??
         widget.textStyle.copyWith(
           fontStyle: FontStyle.italic,
@@ -122,7 +124,8 @@ class _LyricsRendererState extends State<LyricsRenderer> {
 
   @override
   Widget build(BuildContext context) {
-    ChordProcessor _chordProcessor = ChordProcessor(context, widget.chordNotation);
+    ChordProcessor _chordProcessor =
+        ChordProcessor(context, widget.chordNotation);
     final chordLyricsDocument = _chordProcessor.processText(
       text: widget.lyrics,
       lyricsStyle: widget.textStyle,
@@ -139,7 +142,8 @@ class _LyricsRendererState extends State<LyricsRenderer> {
         crossAxisAlignment: widget.horizontalAlignment,
         children: [
           if (widget.leadingWidget != null) widget.leadingWidget!,
-          if (chordLyricsDocument.capo != null) Text('Capo: ${chordLyricsDocument.capo!}', style: capoStyle),
+          if (chordLyricsDocument.capo != null)
+            Text('Capo: ${chordLyricsDocument.capo!}', style: capoStyle),
           ListView.separated(
             shrinkWrap: true,
             scrollDirection: Axis.vertical,
@@ -148,7 +152,8 @@ class _LyricsRendererState extends State<LyricsRenderer> {
               height: widget.lineHeight,
             ),
             itemBuilder: (context, index) {
-              final ChordLyricsLine line = chordLyricsDocument.chordLyricsLines[index];
+              final ChordLyricsLine line =
+                  chordLyricsDocument.chordLyricsLines[index];
               if (line.isStartOfChorus()) {
                 _isChorus = true;
               }
@@ -182,7 +187,8 @@ class _LyricsRendererState extends State<LyricsRenderer> {
                       children: line.chords.map((chord) {
                         if (line.chords.first == chord && verseNumber > 1) {
                           chord.chordText = '     ' + chord.chordText.trim();
-                        } else if (line.chords.first == chord && verseNumber < 2) {
+                        } else if (line.chords.first == chord &&
+                            verseNumber < 2) {
                           chord.chordText = '    ' + chord.chordText.trim();
                         }
                         return Row(
@@ -206,7 +212,8 @@ class _LyricsRendererState extends State<LyricsRenderer> {
                     ),
                   RichText(
                     textScaleFactor: widget.scaleFactor,
-                    text: TextSpan(text: line.lyrics, style: getLineTextStyle()),
+                    text:
+                        TextSpan(text: line.lyrics, style: getLineTextStyle()),
                   )
                 ],
               );
@@ -236,7 +243,8 @@ class _LyricsRendererState extends State<LyricsRenderer> {
 
     if (_controller.offset >= _controller.position.maxScrollExtent) return;
 
-    final seconds = (_controller.position.maxScrollExtent / (widget.scrollSpeed)).floor();
+    final seconds =
+        (_controller.position.maxScrollExtent / (widget.scrollSpeed)).floor();
 
     _controller.animateTo(
       _controller.position.maxScrollExtent,

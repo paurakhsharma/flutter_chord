@@ -41,6 +41,22 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Column(
         children: [
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(12.0),
+              color: Colors.teal,
+              child: TextFormField(
+                initialValue: _lyrics,
+                style: textStyle,
+                maxLines: 50,
+                onChanged: (value) {
+                  setState(() {
+                    _lyrics = value;
+                  });
+                },
+              ),
+            ),
+          ),
           Divider(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -112,8 +128,8 @@ class _HomePageState extends State<HomePage> {
               color: Colors.black,
               child: LyricsRenderer(
                 lyrics: _lyrics,
-                textStyle: Theme.of(context).textTheme.bodyMedium!,
-                chordStyle: Theme.of(context).textTheme.labelMedium!,
+                textStyle: textStyle,
+                chordStyle: chordStyle,
                 onTapChord: (String chord) {
                   print('pressed chord: $chord');
                 },
@@ -147,66 +163,26 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _lyrics = '''
-
+[C]Give me Freedom, [F]Give me fire
+[Am]Give me reason, [G]Take me higher
+[C]See the champions [F], Take the field now
+[Am]Unify us, [G]make us feel proud
+ 
+[C]In the streets our, [F]hands are lifting
+[Am]As we lose our, [G]inhibition
+[C]Celebration, [F]its around us
+[Am]Every nation, [G]all around us
 
 1
-L[D]et me stand be[G]hind You, [D]Lord.
-Let me wash Your [G]feet with my [D]tears.
-Let me [A]wipe them with my [D]hair.
-Let me [Em]kiss them and an[A]oint them with the [D]ointment.
-{soc}
-    I [G]love You!
-    Jesus, I [D]love You!
-    May I waste my all and life on [A]You.
-    Let me [D]pour the ointment [Bm]pure
-    On Your [G]head and on Your feet,
-    On You, most [D]precious One,
-    Bec[A]ause I love [D]You.
-{eoc}
+[C]Give me Freedom, [F]Give me fire
+[Am]Give me reason, [G]Take me higher
+[C]See the champions [F], Take the field now
+[Am]Unify us, [G]make us feel proud
 2
-[D]Let me take a [G]pound of ointment [D]pure
-Of great value [G]to anoint Your [D]feet
-And [A]wipe them with my [D]hair
-That the [Em]house be filled with the [A]fragrance of the [D]ointment.
-{soc}
-    I [G]love You!
-    Jesus, I [D]love You!
-    May I waste my all and life on [A]You.
-  Let me [D]pour the ointment [Bm]pure
-  On Your [G]head and on Your feet,
-  On You, most [D]precious One,
-  Be[A]cause I love [D]You.
-{eoc}
-3
-[D]Lord, they said if [G]You were a [D]prophet,
-You should know who and [G]what I [D]am.
-I'm a [A]sinner that toucheth [D]You,
-A [Em]woman not [A]worthy to a[D]noint You. 
-{soc}
- But I [G]love You!
- Jesus, I [D]love You!
- You forgave me the most; now I love You, Lord, the [A]most.
- Let me [D]pour the ointment [Bm]pure
- On Your [G]head and on Your feet,
- On You, most [D]precious One,
- Be[A]cause You love [D]me.
-{eoc}
-4
-[D]Let my love from my [G]being wash Your [D]feet
-And my glory with[G]out wipe them [D]too.
-Let me [A]kiss them where the nails would [D]pierce.
-All my [Em]love, Lord, and [A]glory I'll waste on [D]You.
-{soc}  
-    I [G]love You!
-   Jesus, I [D]love You!
-   All my glory and love I pour and waste on [A]You.
-   Re[D]ceive my ointment, [Bm]Lord.
-   It's [G]all I have, dear Lord.
-   For You, most [D]precious One,
-   Be[A]cause I love [D]You.
-{eoc}
-
-
+[C]In the streets our, [F]hands are lifting
+[Am]As we lose our, [G]inhibition
+[C]Celebration, [F]its around us
+[Am]Every nation, [G]all around us
 ''';
   }
 }
