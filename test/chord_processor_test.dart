@@ -59,20 +59,22 @@ void main() {
       MaterialApp(
         builder: (context, _) {
           String text =
-              '[C]This is t[D]he lyrics[E]\n[A]This is t[D]he se[B]cond line[E]';
+              '{soc}\n[C]This is t[D]he Cho[D]rus\n{eoc}\n[C]This is t[D]he lyrics[E]\n[A]This is t[D]he se[B]cond line[E]';
           final textStyle = TextStyle(fontSize: 18, color: Colors.green);
+          final chorusStyle = TextStyle(
+              fontSize: 21, fontWeight: FontWeight.bold, color: Colors.white);
 
           final processor = ChordProcessor(context);
           final chordDocument = processor.processText(
             text: text,
             lyricsStyle: textStyle,
             chordStyle: textStyle,
-            chorusStyle: textStyle,
+            chorusStyle: chorusStyle,
           );
 
           expect(
             chordDocument.chordLyricsLines.length,
-            2,
+            5,
           );
           expect(
             chordDocument.chordLyricsLines.last.chords.length,
@@ -83,23 +85,27 @@ void main() {
             'E',
           );
           expect(
-            chordDocument.chordLyricsLines.first.chords.first.leadingSpace,
+            chordDocument.chordLyricsLines[1].chords.first.leadingSpace,
             0.0,
           );
-
           expect(
-            chordDocument.chordLyricsLines.first.chords[1].chordText,
+            chordDocument.chordLyricsLines[1].chords[1].chordText,
             'D',
           );
 
           final textWidth = processor.textWidth('This is t', textStyle);
           final chordWidth = processor.textWidth('C', textStyle);
           expect(
-            chordDocument.chordLyricsLines.first.chords[1].leadingSpace,
+            chordDocument.chordLyricsLines[3].chords[1].leadingSpace,
             textWidth - chordWidth,
           );
 
-          // The builder function must return a widget.
+          final chorusTextWidth = processor.textWidth('This is t', chorusStyle);
+          final chorusChordWidth = processor.textWidth('C', textStyle);
+          expect(
+            chordDocument.chordLyricsLines[1].chords[1].leadingSpace,
+            chorusTextWidth - chorusChordWidth,
+          ); // The builder function must return a widget.
           return Container();
         },
       ),
