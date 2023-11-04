@@ -15,6 +15,7 @@ void main() {
             text: text,
             lyricsStyle: textStyle,
             chordStyle: textStyle,
+            chorusStyle: textStyle,
           );
 
           expect(
@@ -66,6 +67,7 @@ void main() {
             text: text,
             lyricsStyle: textStyle,
             chordStyle: textStyle,
+            chorusStyle: textStyle,
           );
 
           expect(
@@ -118,6 +120,7 @@ void main() {
             text: text,
             lyricsStyle: textStyle,
             chordStyle: textStyle,
+            chorusStyle: textStyle,
           );
 
           expect(chordDocument.capo, 3);
@@ -174,6 +177,7 @@ void main() {
             text: text,
             lyricsStyle: textStyle,
             chordStyle: textStyle,
+            chorusStyle: textStyle,
           );
 
           expect(

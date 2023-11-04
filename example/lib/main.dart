@@ -172,6 +172,23 @@ class _HomePageState extends State<HomePage> {
 [Am]As we lose our, [G]inhibition
 [C]Celebration, [F]its around us
 [Am]Every nation, [G]all around us
+{soc}
+[C]Singing forever [F]young,
+Singing [Am]songs underneath the sun[G]
+Let's [C]rejoice in the beautiful game[F]
+And [Am]together, every end of the day[G]
+{eoc}
+[C]When I get older, [F]I will be stronger
+[Am]They'll call me freedom, [G]just like a waving [C]flag
+And then it goes [F]back, and then it goes [Am]back
+And then it goes [G]back , and then it goes …
+{soc}
+We all say
+[C]When I get older, [F]I will be stronger
+[Am]They'll call me freedom, [G]just like a waving [C]flag
+And then it goes [F]back, and then it goes [Am]back
+And then it goes [G]back , and then it goes …
+{eoc}
 ''';
   }
 }
