@@ -21,6 +21,7 @@ class ChordProcessor {
     required String text,
     required TextStyle lyricsStyle,
     required TextStyle chordStyle,
+    required TextStyle chorusStyle,
     double scaleFactor = 1.0,
     int widgetPadding = 0,
     int transposeIncrement = 0,
@@ -58,7 +59,7 @@ class ChordProcessor {
 
     List<ChordLyricsLine> _chordLyricsLines = newLines
         .map<ChordLyricsLine>(
-            (line) => _processLine(line, lyricsStyle, chordStyle))
+            (line) => _processLine(line, lyricsStyle, chordStyle, chorusStyle))
         .toList();
 
     return ChordLyricsDocument(_chordLyricsLines,
@@ -125,15 +126,23 @@ class ChordProcessor {
         .width;
   }
 
-  ChordLyricsLine _processLine(
-      String line, TextStyle lyricsStyle, TextStyle chordStyle) {
+  bool isChorus = false;
+  ChordLyricsLine _processLine(String line, TextStyle lyricsStyle,
+      TextStyle chordStyle, TextStyle chorusStyle) {
     ChordLyricsLine _chordLyricsLine = ChordLyricsLine();
     String _lyricsSoFar = '';
     String _chordsSoFar = '';
     bool _chordHasStarted = false;
+    if (line.contains("{soc}") || line.contains("{start_of_chorus}")) {
+      isChorus = true;
+    } else if (line.contains("{eoc}") || line.contains("{end_of_chorus}")) {
+      isChorus = false;
+    }
     line.split('').forEach((character) {
       if (character == ']') {
-        final sizeOfLeadingLyrics = textWidth(_lyricsSoFar, lyricsStyle);
+        final sizeOfLeadingLyrics = isChorus
+            ? textWidth(_lyricsSoFar, chorusStyle)
+            : textWidth(_lyricsSoFar, lyricsStyle);
 
         final lastChordText = _chordLyricsLine.chords.isNotEmpty
             ? _chordLyricsLine.chords.last.chordText
