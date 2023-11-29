@@ -52,6 +52,8 @@ class LyricsRenderer extends StatefulWidget {
   /// If not defined it will be the italic version of [textStyle]
   final TextStyle? commentStyle;
 
+  final List<String>? chordPresentation;
+
   const LyricsRenderer(
       {Key? key,
       required this.lyrics,
@@ -72,7 +74,8 @@ class LyricsRenderer extends StatefulWidget {
       this.scrollPhysics = const ClampingScrollPhysics(),
       this.leadingWidget,
       this.trailingWidget,
-      this.chordNotation = ChordNotation.american})
+      this.chordNotation = ChordNotation.american,
+      this.chordPresentation})
       : super(key: key);
 
   @override
@@ -120,6 +123,33 @@ class _LyricsRendererState extends State<LyricsRenderer> {
     } else {
       return widget.textStyle;
     }
+  }
+
+  String replaceChord(String chord) {
+    String _chord = chord;
+    switch(widget.chordNotation) {
+      case ChordNotation.american:
+        int i = 0;
+        for (var c in americanNotes) {
+          if(chord.indexOf(c) >= 0) {
+           _chord = chord.replaceAll(RegExp(c), widget.chordPresentation![i]);
+            break;
+          }
+          i+=1;
+        }
+      break;
+      default:
+        int i = 0;
+        for (var c in italianNotes) {
+          if(chord.indexOf(c) >= 0) {
+           _chord = chord.replaceAll(RegExp(c), widget.chordPresentation![i]);
+            break;
+          }
+          i+=1;
+        }
+      break;
+    }
+    return _chord;
   }
 
   @override
@@ -184,7 +214,7 @@ class _LyricsRendererState extends State<LyricsRenderer> {
                                     child: RichText(
                                       textScaleFactor: widget.scaleFactor,
                                       text: TextSpan(
-                                        text: chord.value.chordText,
+                                        text: widget.chordPresentation != null ? replaceChord(chord.value.chordText) : chord.value.chordText,
                                         style: widget.chordStyle,
                                       ),
                                     ),
