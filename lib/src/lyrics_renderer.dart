@@ -8,6 +8,7 @@ class LyricsRenderer extends StatefulWidget {
   final TextStyle textStyle;
   final TextStyle chordStyle;
   final bool showChord;
+  final bool showText;
   final Function onTapChord;
 
   /// To help stop overflow, this should be the sum of left & right padding
@@ -51,6 +52,8 @@ class LyricsRenderer extends StatefulWidget {
   /// If not defined it will be the italic version of [textStyle]
   final TextStyle? commentStyle;
 
+  final List<String>? chordPresentation;
+
   const LyricsRenderer(
       {Key? key,
       required this.lyrics,
@@ -62,6 +65,7 @@ class LyricsRenderer extends StatefulWidget {
       this.capoStyle,
       this.scaleFactor = 1.0,
       this.showChord = true,
+      this.showText = true,
       this.widgetPadding = 0,
       this.transposeIncrement = 0,
       this.scrollSpeed = 0,
@@ -70,7 +74,8 @@ class LyricsRenderer extends StatefulWidget {
       this.scrollPhysics = const ClampingScrollPhysics(),
       this.leadingWidget,
       this.trailingWidget,
-      this.chordNotation = ChordNotation.american})
+      this.chordNotation = ChordNotation.american,
+      this.chordPresentation})
       : super(key: key);
 
   @override
@@ -120,8 +125,36 @@ class _LyricsRendererState extends State<LyricsRenderer> {
     }
   }
 
+  String replaceChord(String chord) {
+    String _chord = chord;
+    switch(widget.chordNotation) {
+      case ChordNotation.american:
+        int i = 0;
+        for (var c in americanNotes) {
+          if(chord.indexOf(c) >= 0) {
+           _chord = chord.replaceAll(RegExp(c), widget.chordPresentation![i]);
+            break;
+          }
+          i+=1;
+        }
+      break;
+      default:
+        int i = 0;
+        for (var c in italianNotes) {
+          if(chord.indexOf(c) >= 0) {
+           _chord = chord.replaceAll(RegExp(c), widget.chordPresentation![i]);
+            break;
+          }
+          i+=1;
+        }
+      break;
+    }
+    return _chord;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final double fixedChordSpace = 10.0;
     ChordProcessor _chordProcessor =
         ChordProcessor(context, widget.chordNotation);
     final chordLyricsDocument = _chordProcessor.processText(
@@ -170,18 +203,18 @@ class _LyricsRendererState extends State<LyricsRenderer> {
                   if (widget.showChord)
                     Row(
                       children: line.chords
-                          .map((chord) => Row(
+                          .asMap().entries.map((chord) => Row(
                                 children: [
                                   SizedBox(
-                                    width: chord.leadingSpace,
+                                    width: !widget.showText ? ( chord.key == 0 ? 0 : fixedChordSpace ) : chord.value.leadingSpace,
                                   ),
                                   GestureDetector(
                                     onTap: () =>
-                                        widget.onTapChord(chord.chordText),
+                                        widget.onTapChord(chord.value.chordText),
                                     child: RichText(
                                       textScaleFactor: widget.scaleFactor,
                                       text: TextSpan(
-                                        text: chord.chordText,
+                                        text: widget.chordPresentation != null ? replaceChord(chord.value.chordText) : chord.value.chordText,
                                         style: widget.chordStyle,
                                       ),
                                     ),
@@ -190,7 +223,7 @@ class _LyricsRendererState extends State<LyricsRenderer> {
                               ))
                           .toList(),
                     ),
-                  RichText(
+                  if (widget.showText) RichText(
                     textScaleFactor: widget.scaleFactor,
                     text:
                         TextSpan(text: line.lyrics, style: getLineTextStyle()),

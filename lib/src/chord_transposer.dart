@@ -7,6 +7,36 @@ enum ChordNotation {
   portuguese
 }
 
+const List<String> americanNotes = [
+  "C",
+  "C#",
+  "D",
+  "D#",
+  "E",
+  "F",
+  "F#",
+  "G",
+  "G#",
+  "A",
+  "A#",
+  "B"
+];
+
+const List<String> italianNotes = [
+  "Do",
+  "Do#",
+  "Re",
+  "Re#",
+  "Mi",
+  "Fa",
+  "Fa#",
+  "Sol",
+  "Sol#",
+  "La",
+  "La#",
+  "Si"
+];
+
 class ChordTransposer {
   ChordTransposer(this.chordNotation, {this.transpose = 0}) {
     switch (chordNotation) {
@@ -24,36 +54,6 @@ class ChordTransposer {
   final ChordNotation chordNotation;
   late List<String> cycle;
   int transpose;
-
-  static const List<String> americanNotes = [
-    "C",
-    "C#",
-    "D",
-    "D#",
-    "E",
-    "F",
-    "F#",
-    "G",
-    "G#",
-    "A",
-    "A#",
-    "B"
-  ];
-
-  static const List<String> italianNotes = [
-    "Do",
-    "Do#",
-    "Re",
-    "Re#",
-    "Mi",
-    "Fa",
-    "Fa#",
-    "Sol",
-    "Sol#",
-    "La",
-    "La#",
-    "Si"
-  ];
 
   /// Transpose the chord text by the given increment
   String transposeChord(String chord) {
