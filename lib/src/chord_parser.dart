@@ -10,7 +10,7 @@ class ChordProcessor {
   final ChordNotation chordNotation;
   final ChordTransposer chordTransposer;
   final double media;
-  late double _textScaleFactor;
+  late TextScaler _textScaleFactor;
 
   ChordProcessor(this.context, [this.chordNotation = ChordNotation.american])
       : chordTransposer = ChordTransposer(chordNotation),
@@ -28,7 +28,7 @@ class ChordProcessor {
   }) {
     final List<String> lines = text.split('\n');
     final MetadataHandler metadata = MetadataHandler();
-    _textScaleFactor = scaleFactor;
+    _textScaleFactor = TextScaler.linear(scaleFactor);
     chordTransposer.transpose = transposeIncrement;
 
     /// List to store our updated lines without overflows
@@ -117,7 +117,7 @@ class ChordProcessor {
   /// Return the textwidth of the text in the given style
   double textWidth(String text, TextStyle textStyle) {
     return (TextPainter(
-      textScaleFactor: _textScaleFactor,
+      textScaler: _textScaleFactor,
       text: TextSpan(text: text, style: textStyle),
       maxLines: 1,
       textDirection: TextDirection.ltr,

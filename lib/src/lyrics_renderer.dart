@@ -179,11 +179,10 @@ class _LyricsRendererState extends State<LyricsRenderer> {
                                     onTap: () =>
                                         widget.onTapChord(chord.chordText),
                                     child: RichText(
-                                      textScaleFactor: widget.scaleFactor,
                                       text: TextSpan(
                                         text: chord.chordText,
                                         style: widget.chordStyle,
-                                      ),
+                                      ), textScaler: TextScaler.linear(widget.scaleFactor),
                                     ),
                                   )
                                 ],
@@ -191,9 +190,8 @@ class _LyricsRendererState extends State<LyricsRenderer> {
                           .toList(),
                     ),
                   RichText(
-                    textScaleFactor: widget.scaleFactor,
                     text:
-                        TextSpan(text: line.lyrics, style: getLineTextStyle()),
+                        TextSpan(text: line.lyrics, style: getLineTextStyle()), textScaler: TextScaler.linear(widget.scaleFactor),
                   )
                 ],
               );
