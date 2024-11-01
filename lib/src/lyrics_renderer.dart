@@ -51,8 +51,8 @@ class LyricsRenderer extends StatefulWidget {
   /// If not defined it will be the italic version of [textStyle]
   final TextStyle? commentStyle;
 
-  /// Optional scroll listener which gives position percentage of the scroll
-  final Function(double)? scrollListener;
+  /// Optional external scroll controller, otherwise will be created internally
+  final ScrollController? scrollController;
 
   const LyricsRenderer(
       {Key? key,
@@ -74,7 +74,7 @@ class LyricsRenderer extends StatefulWidget {
       this.leadingWidget,
       this.trailingWidget,
       this.chordNotation = ChordNotation.american,
-      this.scrollListener})
+      this.scrollController})
       : super(key: key);
 
   @override
@@ -101,16 +101,10 @@ class _LyricsRendererState extends State<LyricsRenderer> {
           fontStyle: FontStyle.italic,
           fontSize: widget.textStyle.fontSize! - 2,
         );
-    _controller = ScrollController();
+    _controller = widget.scrollController ?? ScrollController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // executes after build
       _scrollToEnd();
-      _controller.position.addListener(() {
-        if (widget.scrollListener != null) {
-          widget.scrollListener!(
-              _controller.offset / _controller.position.maxScrollExtent);
-        }
-      });
     });
   }
 
