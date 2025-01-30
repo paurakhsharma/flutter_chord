@@ -54,6 +54,9 @@ class LyricsRenderer extends StatefulWidget {
   /// Optional external scroll controller, otherwise will be created internally
   final ScrollController? scrollController;
 
+  /// List of characters that will break the line
+  final List<String>? breakingCharacters;
+
   const LyricsRenderer(
       {Key? key,
       required this.lyrics,
@@ -74,7 +77,8 @@ class LyricsRenderer extends StatefulWidget {
       this.leadingWidget,
       this.trailingWidget,
       this.chordNotation = ChordNotation.american,
-      this.scrollController})
+      this.scrollController,
+      this.breakingCharacters})
       : super(key: key);
 
   @override
@@ -136,6 +140,7 @@ class _LyricsRendererState extends State<LyricsRenderer> {
       widgetPadding: widget.widgetPadding,
       scaleFactor: widget.scaleFactor,
       transposeIncrement: widget.transposeIncrement,
+      breakingCharacters: widget.breakingCharacters,
     );
     if (chordLyricsDocument.chordLyricsLines.isEmpty) return Container();
     return SingleChildScrollView(

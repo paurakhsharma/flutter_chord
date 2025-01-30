@@ -25,6 +25,7 @@ class ChordProcessor {
     double scaleFactor = 1.0,
     int widgetPadding = 0,
     int transposeIncrement = 0,
+    required List<String>? breakingCharacters,
   }) {
     final List<String> lines = text.split('\n');
     final MetadataHandler metadata = MetadataHandler();
@@ -50,7 +51,8 @@ class ChordProcessor {
             currentLine: currentLine,
             newLines: newLines,
             lyricsStyle: lyricsStyle,
-            widgetPadding: widgetPadding);
+            widgetPadding: widgetPadding,
+            breakingCharacters: breakingCharacters);
       } else {
         //otherwise just add the regular line
         newLines.add(currentLine.trim());
@@ -73,12 +75,15 @@ class ChordProcessor {
       {required List<String> newLines,
       required String currentLine,
       required TextStyle lyricsStyle,
-      required int widgetPadding}) {
+      required int widgetPadding,
+      List<String>? breakingCharacters}) {
     String _character = '';
     int _characterIndex = 0;
     String _currentCharacters = '';
     bool _chordHasStartedOuter = false;
     int _lastSpace = 0;
+    List<String> _breakCharacters =
+        breakingCharacters ?? [' ', ',', '.', '。', '、'];
 
     //print('found a big line $currentLine');
 
@@ -91,9 +96,9 @@ class ChordProcessor {
         _chordHasStartedOuter = false;
       } else if (!_chordHasStartedOuter) {
         _currentCharacters += _character;
-        if (_character == ' ') {
-          //use this marker to only split where there are spaces. We can trim later.
-          _lastSpace = j;
+        if (_breakCharacters.contains(_character)) {
+          //use this marker to only split where there are breaks. We can trim later.
+          _lastSpace = j + 1;
         }
 
         //This is the point where we need to split
