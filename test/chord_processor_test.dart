@@ -16,6 +16,7 @@ void main() {
             lyricsStyle: textStyle,
             chordStyle: textStyle,
             chorusStyle: textStyle,
+            breakingCharacters: [' '],
           );
 
           expect(
@@ -70,6 +71,7 @@ void main() {
             lyricsStyle: textStyle,
             chordStyle: textStyle,
             chorusStyle: chorusStyle,
+            breakingCharacters: [' '],
           );
 
           expect(
@@ -127,6 +129,7 @@ void main() {
             lyricsStyle: textStyle,
             chordStyle: textStyle,
             chorusStyle: textStyle,
+            breakingCharacters: [' '],
           );
 
           expect(chordDocument.capo, 3);
@@ -184,6 +187,7 @@ void main() {
             lyricsStyle: textStyle,
             chordStyle: textStyle,
             chorusStyle: textStyle,
+            breakingCharacters: [' '],
           );
 
           expect(
@@ -211,6 +215,58 @@ void main() {
           expect(
             chordDocument.chordLyricsLines.last.chords.first.chordText,
             'A',
+          );
+
+          // The builder function must return a widget.
+          return Container();
+        },
+      ),
+    );
+  });
+
+  testWidgets('Can split lyrics based on custom break',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        builder: (context, _) {
+          String text =
+              '[C]もーもたろさんももたろさん、おこしにつけた[D]…[C]もーもたろさんももたろさん、おこしにつけた[D]…';
+          final textStyle = TextStyle(fontSize: 22, color: Colors.green);
+
+          final processor = ChordProcessor(context);
+          final chordDocument = processor.processText(
+            text: text,
+            lyricsStyle: textStyle,
+            chordStyle: textStyle,
+            chorusStyle: textStyle,
+            breakingCharacters: ['、', '…'],
+          );
+
+          expect(
+            chordDocument.chordLyricsLines.length,
+            2,
+          );
+          expect(
+            chordDocument.chordLyricsLines.first.chords.length,
+            3,
+          );
+          expect(
+            chordDocument.chordLyricsLines.last.lyrics,
+            'おこしにつけた…',
+          );
+          expect(
+            chordDocument.chordLyricsLines.first.chords.first.leadingSpace,
+            0.0,
+          );
+
+          expect(
+            chordDocument.chordLyricsLines.first.chords.last.chordText,
+            'C',
+          );
+
+          expect(
+            chordDocument.chordLyricsLines.last.chords.first.chordText,
+            'D',
           );
 
           // The builder function must return a widget.
