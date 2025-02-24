@@ -25,7 +25,7 @@ class ChordProcessor {
     double scaleFactor = 1.0,
     int widgetPadding = 0,
     int transposeIncrement = 0,
-    required List<String>? breakingCharacters,
+    required List<String> breakingCharacters,
   }) {
     final List<String> lines = text.split('\n');
     final MetadataHandler metadata = MetadataHandler();
@@ -76,14 +76,13 @@ class ChordProcessor {
       required String currentLine,
       required TextStyle lyricsStyle,
       required int widgetPadding,
-      List<String>? breakingCharacters}) {
+      required List<String> breakingCharacters}) {
     String _character = '';
     int _characterIndex = 0;
     String _currentCharacters = '';
     bool _chordHasStartedOuter = false;
     int _lastSpace = 0;
-    List<String> _breakCharacters =
-        breakingCharacters ?? [' ', ',', '.', '。', '、'];
+    List<String> _breakCharacters = breakingCharacters;
 
     //print('found a big line $currentLine');
 

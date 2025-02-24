@@ -55,7 +55,7 @@ class LyricsRenderer extends StatefulWidget {
   final ScrollController? scrollController;
 
   /// List of characters that will break the line
-  final List<String>? breakingCharacters;
+  final List<String> breakingCharacters;
 
   const LyricsRenderer(
       {Key? key,
@@ -78,7 +78,7 @@ class LyricsRenderer extends StatefulWidget {
       this.trailingWidget,
       this.chordNotation = ChordNotation.american,
       this.scrollController,
-      this.breakingCharacters})
+      this.breakingCharacters = const [' ', ',', '.', '。', '、']})
       : super(key: key);
 
   @override
