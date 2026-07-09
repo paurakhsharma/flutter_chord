@@ -1,3 +1,6 @@
+## 0.1.3
+* Widen SDK constraint to support latest Flutter/Dart releases
+
 ## 0.1.2
 * Fix incompatibility issues with Flutter 3.0.0
 ## 0.1.1
