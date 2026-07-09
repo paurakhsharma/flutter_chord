@@ -1,8 +1,7 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'model/chord_lyrics_document.dart';
 import 'model/chord_lyrics_line.dart';
+import 'chord_position.dart';
 import 'chord_transposer.dart';
 
 class ChordProcessor {
@@ -142,24 +141,20 @@ class ChordProcessor {
     } else if (line.contains("{eoc}") || line.contains("{end_of_chorus}")) {
       isChorus = false;
     }
+
+    final chordTexts = <String>[];
+    final chordCharIndices = <int>[];
+
     line.split('').forEach((character) {
       if (character == ']') {
-        final sizeOfLeadingLyrics = isChorus
-            ? textWidth(_lyricsSoFar, chorusStyle)
-            : textWidth(_lyricsSoFar, lyricsStyle);
-
-        final lastChordText = _chordLyricsLine.chords.isNotEmpty
-            ? _chordLyricsLine.chords.last.chordText
-            : '';
-
-        final lastChordWidth = textWidth(lastChordText, chordStyle);
-        // final sizeOfThisChord = textWidth(_chordsSoFar, chordStyle);
-
-        double leadingSpace = max(0, sizeOfLeadingLyrics - lastChordWidth);
-
         final transposedChord = chordTransposer.transposeChord(_chordsSoFar);
+        chordTexts.add(transposedChord);
+        // Position where this chord attaches in the cumulative lyrics
+        // string: everything already appended, plus the segment about to
+        // be appended.
+        chordCharIndices
+            .add(_chordLyricsLine.lyrics.length + _lyricsSoFar.length);
 
-        _chordLyricsLine.chords.add(Chord(leadingSpace, transposedChord));
         _chordLyricsLine.lyrics += _lyricsSoFar;
         _lyricsSoFar = '';
         _chordsSoFar = '';
@@ -176,6 +171,18 @@ class ChordProcessor {
     });
 
     _chordLyricsLine.lyrics += _lyricsSoFar;
+
+    final positions = computeChordPositions(
+      lyrics: _chordLyricsLine.lyrics,
+      charIndices: chordCharIndices,
+      chordTexts: chordTexts,
+      lyricStyle: isChorus ? chorusStyle : lyricsStyle,
+      chordStyle: chordStyle,
+      textScaler: _textScaleFactor,
+    );
+    _chordLyricsLine.chords.addAll(
+      positions.map((p) => Chord(p.leadingSpace, p.chordText)),
+    );
 
     return _chordLyricsLine;
   }

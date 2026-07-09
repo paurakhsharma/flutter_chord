@@ -275,4 +275,57 @@ void main() {
       ),
     );
   });
+
+  testWidgets(
+      'Chord positions do not drift on a line with many chords — '
+      'regression test for a bug where a chord gap measured from the '
+      "line's absolute start (instead of from the previous chord) "
+      'double-counted earlier text, pushing later chords in a line '
+      'progressively further right than their real position',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        builder: (context, _) {
+          String text = '[Dm]Deep[F] into[C] the[G] night we go';
+          final textStyle = TextStyle(fontSize: 18, color: Colors.green);
+
+          final processor = ChordProcessor(context);
+          final chordDocument = processor.processText(
+            text: text,
+            lyricsStyle: textStyle,
+            chordStyle: textStyle,
+            chorusStyle: textStyle,
+            breakingCharacters: [' '],
+          );
+
+          final line = chordDocument.chordLyricsLines.single;
+          expect(line.chords.length, 4);
+
+          // The plain lyrics reconstructed by the processor, with each
+          // chord's known attachment point.
+          expect(line.lyrics, 'Deep into the night we go');
+          const attachPoints = [0, 4, 9, 13];
+          var runningX = 0.0;
+          for (var i = 0; i < line.chords.length; i++) {
+            runningX += line.chords[i].leadingSpace;
+            final expectedX = processor.textWidth(
+              line.lyrics.substring(0, attachPoints[i]),
+              textStyle,
+            );
+            expect(
+              runningX,
+              closeTo(expectedX, 0.5),
+              reason: 'chord ${line.chords[i].chordText} drifted from its '
+                  'expected position',
+            );
+            runningX +=
+                processor.textWidth(line.chords[i].chordText, textStyle);
+          }
+
+          // The builder function must return a widget.
+          return Container();
+        },
+      ),
+    );
+  });
 }
