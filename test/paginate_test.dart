@@ -29,7 +29,9 @@ List<List<String>> _describe(List<LyricsPage> pages) => [
       for (final page in pages)
         [
           for (final column in page.columns)
-            column.map((p) => '${p.stanza}:${p.startRow}-${p.endRow}').join(' '),
+            column
+                .map((p) => '${p.stanza}:${p.startRow}-${p.endRow}')
+                .join(' '),
         ],
     ];
 
@@ -173,7 +175,8 @@ void main() {
     final style = LyricsStyle(lyrics: lyricStyle, chords: chordStyle);
     for (final song in loadRealSongs()) {
       for (final (columns, height) in [(1, 600.0), (2, 680.0), (2, 400.0)]) {
-        test('${song.category} $columns×${height.round()}: every row once, '
+        test(
+            '${song.category} $columns×${height.round()}: every row once, '
             'in order, within the column', () {
           final layout = layoutSong(
             parseSong(song.nepaliLyrics),

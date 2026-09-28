@@ -51,6 +51,7 @@ const chordStyle = TextStyle(
   letterSpacing: 0.8,
   fontWeight: FontWeight.w500,
 );
+
 /// Horizontal padding around the lyrics in the song display screen.
 const horizontalPadding = 24.0;
 
@@ -174,9 +175,8 @@ int chordCharIndex(String lyrics, int letters, int gap) {
     index++;
   }
   var spaces = 0;
-  while (spaces < gap &&
-      index < lyrics.length &&
-      lyrics[index].trim().isEmpty) {
+  while (
+      spaces < gap && index < lyrics.length && lyrics[index].trim().isEmpty) {
     spaces++;
     index++;
   }
@@ -192,8 +192,7 @@ double expectedChordX({
 }) {
   final target = measureTextWidth(lyrics.substring(0, charIndex), lyricStyle);
   if (previous == null) return target;
-  final previousEnd =
-      previous.x + measureTextWidth(previous.text, chordStyle);
+  final previousEnd = previous.x + measureTextWidth(previous.text, chordStyle);
   return max(target, previousEnd);
 }
 

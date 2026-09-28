@@ -74,8 +74,7 @@ void main() {
     expect(controller.offset, greaterThan(afterTranspose));
   });
 
-  testWidgets('resumes from where the user scrolled back to',
-      (tester) async {
+  testWidgets('resumes from where the user scrolled back to', (tester) async {
     tester.view.physicalSize = const Size(390, 700);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);

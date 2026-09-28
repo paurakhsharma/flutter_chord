@@ -66,8 +66,8 @@ List<String> wrappedRows(WidgetTester tester) {
   )..layout())
       .height;
   return [
-    for (final paragraph in tester
-        .renderObjectList<RenderParagraph>(find.byType(RichText)))
+    for (final paragraph
+        in tester.renderObjectList<RenderParagraph>(find.byType(RichText)))
       if ((paragraph.text as TextSpan).style != chordStyle &&
           (paragraph.didExceedMaxLines ||
               paragraph.size.height > singleLine * 1.5))
@@ -93,8 +93,7 @@ void main() {
         expect(violations, isEmpty, reason: violations.join('\n'));
       });
 
-      testWidgets('$label: every lyric row stays on one line',
-          (tester) async {
+      testWidgets('$label: every lyric row stays on one line', (tester) async {
         await renderSong(tester, screen, song.nepaliLyrics);
         final wrapped = wrappedRows(tester);
         expect(wrapped, isEmpty, reason: wrapped.join('\n'));
