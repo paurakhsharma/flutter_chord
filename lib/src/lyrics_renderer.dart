@@ -1,85 +1,88 @@
 import 'package:flutter/material.dart';
-import 'chord_transposer.dart';
-import 'model/chord_lyrics_line.dart';
-import 'chord_parser.dart';
+import 'package:flutter/rendering.dart';
 
+import 'chord_lyric_row.dart';
+import 'chord_transposer.dart';
+import 'song_document.dart';
+import 'song_layout.dart';
+
+/// Renders a song as one scrolling column of chord + lyric rows, with
+/// optional linear auto-scroll.
 class LyricsRenderer extends StatefulWidget {
   final String lyrics;
   final TextStyle textStyle;
   final TextStyle chordStyle;
   final bool showChord;
-  final Function onTapChord;
+  final void Function(String chord) onTapChord;
 
-  /// To help stop overflow, this should be the sum of left & right padding
-  final int widgetPadding;
-
-  /// Transpose Increment for the Chords,
-  /// default value is 0, which means no transpose is applied
+  /// Transpose increment for the chords, in semitones.
   final int transposeIncrement;
 
-  /// Auto Scroll Speed,
-  /// default value is 0, which means no auto scroll is applied
+  /// Auto-scroll speed in logical pixels per second; 0 means no scroll.
   final int scrollSpeed;
 
-  /// Extra height between each line
+  /// Extra height between rows.
   final double lineHeight;
 
-  /// Widget before the lyrics starts
+  /// Widget before the lyrics start.
   final Widget? leadingWidget;
 
-  /// Widget after the lyrics finishes
+  /// Widget after the lyrics finish.
   final Widget? trailingWidget;
 
-  /// Horizontal alignment
   final CrossAxisAlignment horizontalAlignment;
 
-  /// Scale factor of chords and lyrics
+  /// Scale factor of chords and lyrics.
   final double scaleFactor;
 
-  /// Notation that will be handled by the transposer
+  /// Notation handled by the transposer.
   final ChordNotation chordNotation;
 
-  /// Define physics of scrolling
   final ScrollPhysics scrollPhysics;
 
-  /// If not defined it will be the bold version of [textStyle]
+  /// Defaults to the bold version of [textStyle].
   final TextStyle? chorusStyle;
 
-  /// If not defined it will be the italic version of [textStyle]
+  /// Defaults to the italic version of [textStyle].
   final TextStyle? capoStyle;
 
-  /// If not defined it will be the italic version of [textStyle]
+  /// Defaults to a smaller italic version of [textStyle].
   final TextStyle? commentStyle;
 
-  /// Optional external scroll controller, otherwise will be created internally
+  /// Optional external scroll controller, otherwise created internally.
   final ScrollController? scrollController;
 
-  /// List of characters that will break the line
-  final List<String> breakingCharacters;
+  /// Stanza scrolled to the top on first layout and after a reflow (font,
+  /// width, chords, transpose). Out-of-range values are clamped.
+  final int initialStanza;
 
-  const LyricsRenderer(
-      {Key? key,
-      required this.lyrics,
-      required this.textStyle,
-      required this.chordStyle,
-      required this.onTapChord,
-      this.chorusStyle,
-      this.commentStyle,
-      this.capoStyle,
-      this.scaleFactor = 1.0,
-      this.showChord = true,
-      this.widgetPadding = 0,
-      this.transposeIncrement = 0,
-      this.scrollSpeed = 0,
-      this.lineHeight = 8.0,
-      this.horizontalAlignment = CrossAxisAlignment.center,
-      this.scrollPhysics = const ClampingScrollPhysics(),
-      this.leadingWidget,
-      this.trailingWidget,
-      this.chordNotation = ChordNotation.american,
-      this.scrollController,
-      this.breakingCharacters = const [' ', ',', '.', '。', '、']})
-      : super(key: key);
+  /// Called with the first stanza whose start is visible when scrolling
+  /// settles, so a parent can restore the reading position elsewhere.
+  final ValueChanged<int>? onStanzaChanged;
+
+  const LyricsRenderer({
+    super.key,
+    required this.lyrics,
+    required this.textStyle,
+    required this.chordStyle,
+    required this.onTapChord,
+    this.chorusStyle,
+    this.commentStyle,
+    this.capoStyle,
+    this.scaleFactor = 1.0,
+    this.showChord = true,
+    this.transposeIncrement = 0,
+    this.scrollSpeed = 0,
+    this.lineHeight = 8.0,
+    this.horizontalAlignment = CrossAxisAlignment.center,
+    this.scrollPhysics = const ClampingScrollPhysics(),
+    this.leadingWidget,
+    this.trailingWidget,
+    this.chordNotation = ChordNotation.american,
+    this.scrollController,
+    this.initialStanza = 0,
+    this.onStanzaChanged,
+  });
 
   @override
   State<LyricsRenderer> createState() => _LyricsRendererState();
@@ -87,189 +90,175 @@ class LyricsRenderer extends StatefulWidget {
 
 class _LyricsRendererState extends State<LyricsRenderer> {
   late final ScrollController _controller;
-  late TextStyle chorusStyle;
-  late TextStyle capoStyle;
-  late TextStyle commentStyle;
-  bool _isChorus = false;
-  bool _isComment = false;
+
+  String? _parsedLyrics;
+  late SongDocument _document;
+
+  Object? _layoutKey;
+  late SongLayout _layout;
+
+  /// Keys on each stanza's first row, to find where stanzas are.
+  List<GlobalKey> _stanzaKeys = [];
+
+  /// Stanza to keep at the top across reflows.
+  late int _anchor = widget.initialStanza;
 
   @override
   void initState() {
     super.initState();
-    chorusStyle = widget.chorusStyle ??
-        widget.textStyle.copyWith(fontWeight: FontWeight.bold);
-    capoStyle = widget.capoStyle ??
-        widget.textStyle.copyWith(fontStyle: FontStyle.italic);
-    commentStyle = widget.commentStyle ??
-        widget.textStyle.copyWith(
-          fontStyle: FontStyle.italic,
-          fontSize: widget.textStyle.fontSize! - 2,
-        );
     _controller = widget.scrollController ?? ScrollController();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // executes after build
-      _scrollToEnd();
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToEnd());
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    if (widget.scrollController == null) _controller.dispose();
     super.dispose();
   }
 
-  TextStyle getLineTextStyle() {
-    if (_isChorus) {
-      return chorusStyle;
-    } else if (_isComment) {
-      return commentStyle;
-    } else {
-      return widget.textStyle;
+  LyricsStyle get _style => LyricsStyle(
+        lyrics: widget.textStyle,
+        chords: widget.chordStyle,
+        chorus: widget.chorusStyle,
+        comment: widget.commentStyle,
+        textScaler: TextScaler.linear(widget.scaleFactor),
+      );
+
+  SongLayout _layoutFor(double maxWidth) {
+    if (_parsedLyrics != widget.lyrics) {
+      _document = parseSong(widget.lyrics);
+      _parsedLyrics = widget.lyrics;
     }
+    final style = _style;
+    final key = Object.hash(
+      _document,
+      style,
+      maxWidth,
+      widget.transposeIncrement,
+      widget.chordNotation,
+      widget.showChord,
+      widget.lineHeight,
+    );
+    if (key != _layoutKey) {
+      _layout = layoutSong(
+        _document,
+        style: style,
+        maxWidth: maxWidth,
+        transpose: widget.transposeIncrement,
+        notation: widget.chordNotation,
+        showChords: widget.showChord,
+        rowSpacing: widget.lineHeight,
+      );
+      final isReflow = _layoutKey != null;
+      _layoutKey = key;
+      if (_stanzaKeys.length != _layout.stanzas.length) {
+        _stanzaKeys = [for (final _ in _layout.stanzas) GlobalKey()];
+      }
+      if (isReflow || _anchor > 0) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => _jumpToAnchor());
+      }
+    }
+    return _layout;
   }
 
   @override
   Widget build(BuildContext context) {
-    ChordProcessor _chordProcessor =
-        ChordProcessor(context, widget.chordNotation);
-    final chordLyricsDocument = _chordProcessor.processText(
-      text: widget.lyrics,
-      lyricsStyle: widget.textStyle,
-      chordStyle: widget.chordStyle,
-      chorusStyle: chorusStyle,
-      widgetPadding: widget.widgetPadding,
-      scaleFactor: widget.scaleFactor,
-      transposeIncrement: widget.transposeIncrement,
-      breakingCharacters: widget.breakingCharacters,
-    );
-    if (chordLyricsDocument.chordLyricsLines.isEmpty) return Container();
-    return SingleChildScrollView(
-      controller: _controller,
-      physics: widget.scrollPhysics,
-      child: Column(
-        crossAxisAlignment: widget.horizontalAlignment,
-        children: [
-          if (widget.leadingWidget != null) widget.leadingWidget!,
-          if (chordLyricsDocument.capo != null)
-            Text('Capo: ${chordLyricsDocument.capo!}', style: capoStyle),
-          ListView.separated(
-            shrinkWrap: true,
-            scrollDirection: Axis.vertical,
-            physics: const NeverScrollableScrollPhysics(),
-            separatorBuilder: (context, index) => SizedBox(
-              height: widget.lineHeight,
-            ),
-            itemBuilder: (context, index) {
-              final ChordLyricsLine line =
-                  chordLyricsDocument.chordLyricsLines[index];
-              if (line.isStartOfChorus()) {
-                _isChorus = true;
-              }
-              if (line.isEndOfChorus()) {
-                _isChorus = false;
-              }
-              if (line.isComment()) {
-                _isComment = true;
-              } else {
-                _isComment = false;
-              }
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (widget.showChord)
-                    Row(
-                      children: line.chords
-                          .map((chord) => Row(
-                                children: [
-                                  SizedBox(
-                                    width: chord.leadingSpace,
-                                  ),
-                                  GestureDetector(
-                                    onTap: () =>
-                                        widget.onTapChord(chord.chordText),
-                                    child: RichText(
-                                      text: TextSpan(
-                                        text: chord.chordText,
-                                        style: widget.chordStyle,
-                                      ),
-                                      textScaler:
-                                          TextScaler.linear(widget.scaleFactor),
-                                    ),
-                                  )
-                                ],
-                              ))
-                          .toList(),
-                    ),
-                  RichText(
-                    text:
-                        TextSpan(text: line.lyrics, style: getLineTextStyle()),
-                    textScaler: TextScaler.linear(widget.scaleFactor),
-                  )
+    return LayoutBuilder(builder: (context, constraints) {
+      final layout = _layoutFor(constraints.maxWidth);
+      if (layout.stanzas.isEmpty) return const SizedBox();
+      final style = _style;
+      final capo = _document.capo;
+
+      return NotificationListener<ScrollEndNotification>(
+        onNotification: (_) {
+          _updateAnchor();
+          return false;
+        },
+        child: SingleChildScrollView(
+          controller: _controller,
+          physics: widget.scrollPhysics,
+          child: Column(
+            crossAxisAlignment: widget.horizontalAlignment,
+            children: [
+              if (widget.leadingWidget != null) widget.leadingWidget!,
+              if (capo != null)
+                Text(
+                  'Capo: $capo',
+                  style: widget.capoStyle ??
+                      widget.textStyle.copyWith(fontStyle: FontStyle.italic),
+                ),
+              for (var s = 0; s < layout.stanzas.length; s++) ...[
+                if (s > 0) SizedBox(height: layout.stanzaGap),
+                for (var r = 0; r < layout.stanzas[s].rows.length; r++) ...[
+                  if (r > 0) SizedBox(height: widget.lineHeight),
+                  ChordLyricRow(
+                    key: r == 0 ? _stanzaKeys[s] : null,
+                    row: layout.stanzas[s].rows[r],
+                    style: style,
+                    onTapChord: widget.onTapChord,
+                  ),
                 ],
-              );
-            },
-            itemCount: chordLyricsDocument.chordLyricsLines.length,
+              ],
+              if (widget.trailingWidget != null) widget.trailingWidget!,
+            ],
           ),
-          if (widget.trailingWidget != null) widget.trailingWidget!,
-        ],
-      ),
-    );
+        ),
+      );
+    });
+  }
+
+  /// Scroll offset that puts [stanza]'s first row at the top.
+  double? _offsetOf(int stanza) {
+    final box = _stanzaKeys[stanza].currentContext?.findRenderObject();
+    if (box == null) return null;
+    return RenderAbstractViewport.of(box).getOffsetToReveal(box, 0).offset;
+  }
+
+  void _updateAnchor() {
+    if (!_controller.hasClients) return;
+    final offset = _controller.offset;
+    for (var s = 0; s < _stanzaKeys.length; s++) {
+      final top = _offsetOf(s);
+      if (top != null && top >= offset - 1) {
+        if (s != _anchor) {
+          _anchor = s;
+          widget.onStanzaChanged?.call(s);
+        }
+        return;
+      }
+    }
+  }
+
+  void _jumpToAnchor() {
+    if (!mounted || !_controller.hasClients || _stanzaKeys.isEmpty) return;
+    final stanza = _anchor.clamp(0, _stanzaKeys.length - 1);
+    final top = stanza == 0 ? 0.0 : _offsetOf(stanza);
+    if (top == null) return;
+    _controller.jumpTo(top.clamp(0, _controller.position.maxScrollExtent));
   }
 
   @override
   void didUpdateWidget(covariant LyricsRenderer oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.scrollSpeed != widget.scrollSpeed) {
-      _scrollToEnd();
-    }
+    if (oldWidget.scrollSpeed != widget.scrollSpeed) _scrollToEnd();
   }
 
   void _scrollToEnd() {
+    if (!_controller.hasClients) return;
     if (widget.scrollSpeed <= 0) {
-      // stop scrolling if the speed is 0 or less
+      // Stop scrolling when the speed is 0 or less.
       _controller.jumpTo(_controller.offset);
       return;
     }
 
-    if (_controller.offset >= _controller.position.maxScrollExtent) return;
+    final position = _controller.position;
+    if (_controller.offset >= position.maxScrollExtent) return;
 
-    final seconds =
-        (_controller.position.maxScrollExtent / (widget.scrollSpeed)).floor();
-
+    final seconds = (position.maxScrollExtent / widget.scrollSpeed).floor();
     _controller.animateTo(
-      _controller.position.maxScrollExtent,
-      duration: Duration(
-        seconds: seconds,
-      ),
+      position.maxScrollExtent,
+      duration: Duration(seconds: seconds),
       curve: Curves.linear,
     );
-  }
-}
-
-class TextRender extends CustomPainter {
-  final String text;
-  final TextStyle style;
-  TextRender(this.text, this.style);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final textSpan = TextSpan(
-      text: text,
-      style: style,
-    );
-    final textPainter = TextPainter(
-      text: textSpan,
-      textDirection: TextDirection.ltr,
-    );
-    textPainter.layout(
-      minWidth: 0,
-      maxWidth: size.width,
-    );
-    textPainter.paint(canvas, Offset.zero);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return false;
   }
 }
