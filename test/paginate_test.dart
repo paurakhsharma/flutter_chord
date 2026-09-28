@@ -140,6 +140,23 @@ void main() {
     }
   });
 
+  test('a page that opens mid-stanza reads from the next stanza start', () {
+    // Stanza 1 (15 rows) is taller than a column, so page 2 opens with
+    // its continuation; the reading position is stanza 2.
+    final pages = paginate(
+      _song([_stanza(3), _stanza(15), _stanza(3)]),
+      columns: 1,
+      columnHeight: 100,
+    );
+    final page = pages.firstWhere((p) => p.columns.first.first.startRow > 0);
+    expect(page.firstStanza, 1);
+    expect(page.readingStanza, 2);
+    expect(
+      pages.indexWhere((p) => p.containsStanzaStart(page.readingStanza)),
+      pages.indexOf(page),
+    );
+  });
+
   test('one column is plain flow', () {
     final pages = paginate(
       _song([_stanza(3), _stanza(3), _stanza(3)]),

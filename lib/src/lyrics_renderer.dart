@@ -154,7 +154,11 @@ class _LyricsRendererState extends State<LyricsRenderer> {
       if (_stanzaKeys.length != _layout.stanzas.length) {
         _stanzaKeys = [for (final _ in _layout.stanzas) GlobalKey()];
       }
-      if (isReflow || _anchor > 0) {
+      if (isReflow && widget.scrollSpeed > 0) {
+        // Autoscrolling: keep going from wherever the page is now; the
+        // content height changed, so restart towards the new end.
+        WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToEnd());
+      } else if (isReflow || _anchor > 0) {
         WidgetsBinding.instance.addPostFrameCallback((_) => _jumpToAnchor());
       }
     }
@@ -169,9 +173,14 @@ class _LyricsRendererState extends State<LyricsRenderer> {
       final style = _style;
       final capo = _document.capo;
 
-      return NotificationListener<ScrollEndNotification>(
-        onNotification: (_) {
-          _updateAnchor();
+      return NotificationListener<ScrollNotification>(
+        onNotification: (notification) {
+          if (notification is ScrollEndNotification) {
+            _updateAnchor();
+            _resumeAutoscroll();
+          } else if (notification is ScrollUpdateNotification) {
+            _updateAnchorThrottled();
+          }
           return false;
         },
         child: SingleChildScrollView(
@@ -214,6 +223,30 @@ class _LyricsRendererState extends State<LyricsRenderer> {
     return RenderAbstractViewport.of(box).getOffsetToReveal(box, 0).offset;
   }
 
+  DateTime _lastAnchorUpdate = DateTime(0);
+
+  /// Autoscroll is one long animation with no scroll end until the bottom,
+  /// so track the reading stanza while it runs too.
+  void _updateAnchorThrottled() {
+    final now = DateTime.now();
+    if (now.difference(_lastAnchorUpdate) < const Duration(milliseconds: 300)) {
+      return;
+    }
+    _lastAnchorUpdate = now;
+    _updateAnchor();
+  }
+
+  /// A drag interrupts the autoscroll animation. When the user lets go,
+  /// carry on from wherever they left the page.
+  void _resumeAutoscroll() {
+    if (widget.scrollSpeed <= 0) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_controller.hasClients) return;
+      if (_controller.position.isScrollingNotifier.value) return;
+      _scrollToEnd();
+    });
+  }
+
   void _updateAnchor() {
     if (!_controller.hasClients) return;
     final offset = _controller.offset;
@@ -252,12 +285,14 @@ class _LyricsRendererState extends State<LyricsRenderer> {
     }
 
     final position = _controller.position;
-    if (_controller.offset >= position.maxScrollExtent) return;
+    final remaining = position.maxScrollExtent - _controller.offset;
+    if (remaining <= 0) return;
 
-    final seconds = (position.maxScrollExtent / widget.scrollSpeed).floor();
+    // Same speed wherever it starts from: time for the distance left.
+    final milliseconds = (remaining / widget.scrollSpeed * 1000).round();
     _controller.animateTo(
       position.maxScrollExtent,
-      duration: Duration(seconds: seconds),
+      duration: Duration(milliseconds: milliseconds),
       curve: Curves.linear,
     );
   }

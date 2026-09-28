@@ -35,6 +35,19 @@ class LyricsPage {
   /// The stanza the page starts with.
   int get firstStanza => columns.first.first.stanza;
 
+  /// The stanza to remember as the reading position: the first stanza
+  /// that starts on this page. A page that opens mid-stanza would
+  /// otherwise send a reflow back to the previous page, where that stanza
+  /// starts. Falls back to [firstStanza] when no stanza starts here.
+  int get readingStanza {
+    for (final column in columns) {
+      for (final piece in column) {
+        if (piece.startRow == 0) return piece.stanza;
+      }
+    }
+    return firstStanza;
+  }
+
   bool containsStanzaStart(int stanza) => columns.any(
         (column) => column.any((p) => p.stanza == stanza && p.startRow == 0),
       );
