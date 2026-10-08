@@ -17,7 +17,6 @@ void main() {
           textStyle: lyricStyle.copyWith(fontSize: fontSize),
           chordStyle: chordStyle,
           onTapChord: (_) {},
-          horizontalAlignment: CrossAxisAlignment.start,
           initialStanza: initialStanza,
         ),
       ),

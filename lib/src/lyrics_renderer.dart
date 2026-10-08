@@ -30,8 +30,6 @@ class LyricsRenderer extends StatefulWidget {
   /// Widget after the lyrics finish.
   final Widget? trailingWidget;
 
-  final CrossAxisAlignment horizontalAlignment;
-
   /// Scale factor of chords and lyrics.
   final double scaleFactor;
 
@@ -74,7 +72,6 @@ class LyricsRenderer extends StatefulWidget {
     this.transposeIncrement = 0,
     this.scrollSpeed = 0,
     this.lineHeight = 8.0,
-    this.horizontalAlignment = CrossAxisAlignment.center,
     this.scrollPhysics = const ClampingScrollPhysics(),
     this.leadingWidget,
     this.trailingWidget,
@@ -187,7 +184,7 @@ class _LyricsRendererState extends State<LyricsRenderer> {
           controller: _controller,
           physics: widget.scrollPhysics,
           child: Column(
-            crossAxisAlignment: widget.horizontalAlignment,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (widget.leadingWidget != null) widget.leadingWidget!,
               if (capo != null)

@@ -136,7 +136,6 @@ class _HomePageState extends State<HomePage> {
                 transposeIncrement: transposeIncrement,
                 scrollSpeed: scrollSpeed,
                 lineHeight: 4,
-                horizontalAlignment: CrossAxisAlignment.start,
                 leadingWidget: Padding(
                   padding: const EdgeInsets.symmetric(
                     vertical: 16,

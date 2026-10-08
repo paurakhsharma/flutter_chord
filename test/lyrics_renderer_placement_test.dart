@@ -31,7 +31,6 @@ Future<List<RenderedLine>> renderSong(
             chordStyle: chordStyle,
             showChord: showChord,
             onTapChord: (_) {},
-            horizontalAlignment: CrossAxisAlignment.start,
           ),
         ),
       ),
